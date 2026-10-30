@@ -1,12 +1,8 @@
 1. Kontrollere prognoseoppsett og data leakage
 
-Kritisk
-
 Bekreft at alle inputvariabler faktisk er tilgjengelige når prognosen lages kl. 00 dagen før måldagen. Kontroller særlig LAG_2D, LAG_7D og PREV_DAY_MEAN. Dokumenter at tilgjengeligheten av målinger er en forutsetning dersom faktisk publiseringstid ikke kan bekreftes.
 
 2. Undersøke early stopping i Gradient Boosting
-
-Kritisk
 
 Sjekk om scikit-learn automatisk bruker et tilfeldig internt valideringsutvalg for early stopping. Finn ut hvor mange iterasjoner modellen faktisk gjennomførte, og vurder om innstillingen bør endres eller bare dokumenteres som en metodisk begrensning.
 

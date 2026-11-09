@@ -1,6 +1,6 @@
-# Samlet dokumentasjon av notatbøkene 00–02
+# Samlet dokumentasjon av notatbøkene 01–03
 
-Eksportert: 2026-11-08T17:39:26+01:00
+Eksportert: 2026-11-09T10:52:50+01:00
 
 Dokumentet inneholder **all cellekode, all Markdown-tekst og alle lagrede resultater** fra de tre notatbøkene, i opprinnelig rekkefølge. Figurer er eksportert uten endring fra de lagrede PNG-dataene. HTML-tabeller og tekstvisninger er begge tatt med der begge finnes.
 
@@ -10,34 +10,64 @@ Cellenumrene nedenfor er **énbaserte posisjoner i notatboken**, inkludert tekst
 
 ## Innhold
 
-1. [00 – Originaldata, tidsbehandling og innledende modeller](#notatbok-00)
-2. [01 – Datakvalitet og behandling av avvik](#notatbok-01)
-3. [02 – Forbruksmønstre og geografisk analyse](#notatbok-02)
+1. [01 – Datagrunnlag og preprosessering](#notatbok-01)
+2. [02 – Datakvalitet og rensebeslutninger](#notatbok-02)
+3. [03 – Utforskende dataanalyse](#notatbok-03)
 
 ## Leserveiledning til prosjektforløpet
 
-- **00_pre_processed_data:** Leser originalfilen, undersøker omfang og statistikk, konverterer tid til Europe/Oslo og lager kalenderkolonner. Deretter brukes Oslo/Privat som et mindre utvalg, med forbruk per målepunkt og tilpasning av lineær regresjon og polynomer til gjennomsnittlig døgnprofil. MSE-verdiene i celle 24 måler tilpasning til de samme 24 timegjennomsnittene som modellene trenes på; de er ikke mål på prognosefeil på et separat testsett.
-- **01_data_overview:** Leser consumption_processed.csv, undersøker manglende verdier, duplikater, negative verdier og ekstreme observasjoner. Celle 12 finner åtte Orkland/Industri-verdier over 10 millioner kWh, og celle 14 filtrerer dem fra variabelen df. Dette filtreringstrinnet skriver ikke i seg selv tilbake til CSV-filen. Teksten oppgir at negative forbruksverdier beholdes. Videre undersøkes sommertid og kommunenummer.
-- **02_analysis:** Leser consumption_processed.csv og undersøker fordelinger, sesong, timer, ukedager og geografiske forskjeller. Logaritmiske histogrammer bruker bare positivt volum. Gruppestatistikken har åtte færre industriobservasjoner enn rådataene i notatbok 00. De lagrede resultatene er derfor konsistente med at de åtte ekstreme verdiene var fjernet før denne analysen; selve filendringen dokumenteres ikke av lesecellen. Måneds-, time- og ukedagskurvene viser gjennomsnitt per observasjon, ikke samlet nasjonalt forbruk.
+- **01_data_preparation:** Leser originalfilen og kontrollerer tid, kalender og døgnprofil. Kurvetilpasningene evalueres på de samme 24 timegjennomsnittene som de trenes på. MSE her måler tilpasning, ikke uavhengig prognosefeil.
+- **02_data_quality:** Leser data/interim/consumption_preprocessed.csv før rensing. Undersøker mangler, duplikater, negative verdier, Orkland-avvik, sommertid og kommuneendringer. Notebooken filtrerer bare i minnet. scripts/data/clean_consumption.py skriver et separat renset datasett. Negative verdier beholdes.
+- **03_exploratory_analysis:** Leser data/processed/consumption_cleaned.csv. Åtte Orkland/Industri-observasjoner er utelatt i de lagrede resultatene. Logaritmiske histogrammer bruker bare positivt volum. Måned-, time- og ukedagskurver viser gjennomsnitt per observasjon, ikke nasjonale totaler.
 - Kommuneutvalg og andre beslutninger gjengis slik de står i hver notatbok. Kontroller den faktiske utvalgskoden senere i prosjektet før du beskriver ett endelig kommuneutvalg.
 
 ## Kildeoversikt
 
 | Notatbok | Celler | Kodeceller | Tekstceller | Lagrede resultatelementer | PNG-figurer |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| 00_pre_processed_data.ipynb | 24 | 21 | 3 | 13 | 4 |
-| 01_data_overview.ipynb | 24 | 21 | 3 | 21 | 3 |
-| 02_analysis.ipynb | 13 | 11 | 2 | 9 | 6 |
+| 01_data_preparation.ipynb | 53 | 21 | 32 | 13 | 4 |
+| 02_data_quality.ipynb | 52 | 21 | 31 | 21 | 3 |
+| 03_exploratory_analysis.ipynb | 31 | 11 | 20 | 9 | 6 |
 
-<a id="notatbok-00"></a>
+<a id="notatbok-01"></a>
 
-## 00_pre_processed_data.ipynb
+## 01_data_preparation.ipynb
 
-Kilde: [åpne notatboken](../../notebooks/00_pre_processed_data.ipynb).
+Kilde: [åpne notatboken](../../notebooks/01_data_preparation.ipynb).
 
-SHA-256 av kildefilen: `df404be6e2b28256880692e523861ec051b9de13a459fdbc26d66df3d27c8276`.
+SHA-256 av kildefilen: `6882ae808512f13196439bb6750ce1220114d3caa1341d0c1780f6163a1d2430`.
 
-### Celle 1 – code
+### Celle 1 – markdown
+
+# 01 – Datagrunnlag og preprosessering
+
+- **Formål:** Les originaldata, kontroller kalenderbehandling og beskriv døgnprofilen. Produksjonsfilene lages av skriptene i `scripts/data/`.
+- **Input:** `data/raw/consumption.csv`.
+- **Utbytte:** tidskontroller, døgnprofil og illustrerende kurvetilpasning.
+- **Kjøring:** Velg prosjektets Python-kernel og kjør fra topp til bunn. Stier finner prosjektroten fra både rotmappen og notebookmappen.
+
+
+---
+
+### Celle 2 – markdown
+
+## 1. Datagrunnlag
+
+
+---
+
+### Celle 3 – markdown
+
+### Steg 1: Biblioteker
+
+- **Hva:** Laster pandas.
+- **Hvorfor:** For å lese og undersøke CSV-data.
+- **Utbytte:** Et klart analysemiljø.
+
+
+---
+
+### Celle 4 – code
 
 Kjøringsteller: `1`.
 
@@ -51,21 +81,37 @@ import pandas as pd
 
 ---
 
-### Celle 2 – markdown
+### Celle 5 – markdown
 
 Overview
 
 ---
 
-### Celle 3 – code
+### Celle 6 – markdown
+
+### Steg 2: Les originaldata
+
+- **Hva:** Leser den uendrede originalfilen.
+- **Hvorfor:** For å starte med hele datagrunnlaget.
+- **Utbytte:** En tabell med opprinnelige målinger.
+
+
+---
+
+### Celle 7 – code
 
 Kjøringsteller: `2`.
 
 **Kode:**
 
 ```python
+from pathlib import Path
+
+ROOT = next(p for p in (Path.cwd(), *Path.cwd().parents)
+            if (p / "AGENTS.md").is_file() and (p / "data").is_dir())
+
 df = pd.read_csv(
-    "../data/consumption.csv",
+    ROOT / "data/raw/consumption.csv",
     sep=";",
     decimal=",",
     parse_dates=["STARTTID", "SLUTTID"]
@@ -76,7 +122,18 @@ df = pd.read_csv(
 
 ---
 
-### Celle 4 – code
+### Celle 8 – markdown
+
+### Steg 3: Omfang og grunnstatistikk
+
+- **Hva:** Viser størrelse, datatyper, mangler og statistikk.
+- **Hvorfor:** For å avdekke grunnleggende dataproblemer.
+- **Utbytte:** En første kvalitetsoversikt.
+
+
+---
+
+### Celle 9 – code
 
 Kjøringsteller: `3`.
 
@@ -182,13 +239,31 @@ Name: ANTALL_MÅLEPUNKT, dtype: float64
 
 ---
 
-### Celle 5 – markdown
+### Celle 10 – markdown
 
 Endre tiden og filtrere
 
 ---
 
-### Celle 6 – code
+### Celle 11 – markdown
+
+## 2. Tidsbehandling og kalender
+
+
+---
+
+### Celle 12 – markdown
+
+### Steg 4: Lokal tid og kalender
+
+- **Hva:** Konverterer via UTC til Europe/Oslo og lager kalenderkolonner.
+- **Hvorfor:** For å håndtere tidssoner og sommertid.
+- **Utbytte:** Lokale datoer og timer.
+
+
+---
+
+### Celle 13 – code
 
 Kjøringsteller: `4`.
 
@@ -219,7 +294,18 @@ df["DAY_OF_WEEK"] = df["STARTTID"].dt.dayofweek
 
 ---
 
-### Celle 7 – code
+### Celle 14 – markdown
+
+### Steg 5: Kontroller tidsstempler
+
+- **Hva:** Viser konverterte start- og sluttider.
+- **Hvorfor:** For å kontrollere tidsbehandlingen.
+- **Utbytte:** Et lesbart tidsutvalg.
+
+
+---
+
+### Celle 15 – code
 
 Kjøringsteller: `5`.
 
@@ -298,7 +384,18 @@ df[["STARTTID", "SLUTTID"]].head()
 
 ---
 
-### Celle 8 – code
+### Celle 16 – markdown
+
+### Steg 6: Kontroller tidsdatatyper
+
+- **Hva:** Viser datatypene for tidskolonnene.
+- **Hvorfor:** For å bekrefte tidssonebevisste verdier.
+- **Utbytte:** Datatyper med Europe/Oslo.
+
+
+---
+
+### Celle 17 – code
 
 Kjøringsteller: `6`.
 
@@ -320,7 +417,18 @@ dtype: object
 
 ---
 
-### Celle 9 – code
+### Celle 18 – markdown
+
+### Steg 7: Kontroller kalenderkolonner
+
+- **Hva:** Viser tidsstempel og kalenderinformasjon sammen.
+- **Hvorfor:** For å kontrollere at avledningen stemmer.
+- **Utbytte:** Et kontrollerbart radutvalg.
+
+
+---
+
+### Celle 19 – code
 
 Kjøringsteller: `7`.
 
@@ -425,13 +533,40 @@ df[
 
 ---
 
-### Celle 10 – markdown
+### Celle 20 – markdown
+
+**Kort oppsummering**
+
+- Kalenderkolonnene bygger på Europe/Oslo. Notebooken endrer ikke originalfilen.
+
+
+---
+
+### Celle 21 – markdown
 
 Lage subset siden datamengden er så stor
 
 ---
 
-### Celle 11 – code
+### Celle 22 – markdown
+
+## 3. Innledende visualisering
+
+
+---
+
+### Celle 23 – markdown
+
+### Steg 8: Avgrens til Oslo Privat
+
+- **Hva:** Velger Oslo og privat forbruk.
+- **Hvorfor:** For å illustrere døgnmønster i et mindre utvalg.
+- **Utbytte:** En separat deltabell.
+
+
+---
+
+### Celle 24 – code
 
 Kjøringsteller: `8`.
 
@@ -448,7 +583,18 @@ df_subset = df[
 
 ---
 
-### Celle 12 – code
+### Celle 25 – markdown
+
+### Steg 9: Utvalgets størrelse
+
+- **Hva:** Teller observasjoner i delutvalget.
+- **Hvorfor:** For å dokumentere avgrensningen.
+- **Utbytte:** Antall rader og kolonner.
+
+
+---
+
+### Celle 26 – code
 
 Kjøringsteller: `9`.
 
@@ -468,7 +614,18 @@ df_subset.shape
 
 ---
 
-### Celle 13 – code
+### Celle 27 – markdown
+
+### Steg 10: Inspiser delutvalget
+
+- **Hva:** Viser de første radene.
+- **Hvorfor:** For å kontrollere kommune og gruppe.
+- **Utbytte:** Et representativt formatutvalg.
+
+
+---
+
+### Celle 28 – code
 
 Kjøringsteller: `10`.
 
@@ -621,7 +778,18 @@ df_subset.head()
 
 ---
 
-### Celle 14 – code
+### Celle 29 – markdown
+
+### Steg 11: Forbruk per målepunkt
+
+- **Hva:** Deler volum på antall målepunkter.
+- **Hvorfor:** For å normalisere forbruket.
+- **Utbytte:** KWH_PER_POINT.
+
+
+---
+
+### Celle 30 – code
 
 Kjøringsteller: `11`.
 
@@ -637,7 +805,18 @@ df_subset["KWH_PER_POINT"] = (
 
 ---
 
-### Celle 15 – code
+### Celle 31 – markdown
+
+### Steg 12: Kontroller normalisering
+
+- **Hva:** Viser volum, målepunkter og beregnet forhold.
+- **Hvorfor:** For å gjøre beregningen etterprøvbar.
+- **Utbytte:** Et kontrollutvalg.
+
+
+---
+
+### Celle 32 – code
 
 Kjøringsteller: `12`.
 
@@ -730,7 +909,18 @@ df_subset[
 
 ---
 
-### Celle 16 – code
+### Celle 33 – markdown
+
+### Steg 13: Gjennomsnittlig døgnprofil
+
+- **Hva:** Beregner gjennomsnitt per klokktime.
+- **Hvorfor:** For å beskrive døgnmønsteret.
+- **Utbytte:** 24 timegjennomsnitt.
+
+
+---
+
+### Celle 34 – code
 
 Kjøringsteller: `13`.
 
@@ -781,7 +971,18 @@ Name: KWH_PER_POINT, dtype: float64
 
 ---
 
-### Celle 17 – code
+### Celle 35 – markdown
+
+### Steg 14: Visualiser døgnprofilen
+
+- **Hva:** Plotter timegjennomsnittene.
+- **Hvorfor:** For å synliggjøre variasjon gjennom døgnet.
+- **Utbytte:** En døgnprofil for Oslo Privat.
+
+
+---
+
+### Celle 36 – code
 
 Kjøringsteller: `14`.
 
@@ -799,7 +1000,7 @@ plt.show()
 
 **Lagret resultat 1 – display_data:**
 
-![00_pre_processed_data, celle 17, resultat 1](figurer/00_pre_processed_data_celle_17_resultat_01.png)
+![01_data_preparation, celle 36, resultat 1](figures/01_data_preparation_celle_36_resultat_01.png)
 
 **Lagret tekstvisning:**
 
@@ -809,7 +1010,34 @@ plt.show()
 
 ---
 
-### Celle 18 – code
+### Celle 37 – markdown
+
+**Kort oppsummering**
+
+- Døgnprofilen gjelder Oslo Privat og gjennomsnitt per målepunkt. Den beskriver dataene, ikke framtidig prognoseytelse.
+
+
+---
+
+### Celle 38 – markdown
+
+## 4. Illustrerende profiltilpasning
+
+
+---
+
+### Celle 39 – markdown
+
+### Steg 15: Illustrasjon: lineær tilpasning
+
+- **Hva:** Tilpasser en rett linje til timegjennomsnittene.
+- **Hvorfor:** For å undersøke enkel kurvetilpasning.
+- **Utbytte:** Prediksjoner på de samme 24 punktene.
+
+
+---
+
+### Celle 40 – code
 
 Kjøringsteller: `15`.
 
@@ -832,7 +1060,18 @@ y_pred = linear_model.predict(X)
 
 ---
 
-### Celle 19 – code
+### Celle 41 – markdown
+
+### Steg 16: Vis lineær tilpasning
+
+- **Hva:** Plotter observerte gjennomsnitt og rett linje.
+- **Hvorfor:** For å vurdere profilens form.
+- **Utbytte:** En sammenligningsfigur.
+
+
+---
+
+### Celle 42 – code
 
 Kjøringsteller: `16`.
 
@@ -851,7 +1090,7 @@ plt.show()
 
 **Lagret resultat 1 – display_data:**
 
-![00_pre_processed_data, celle 19, resultat 1](figurer/00_pre_processed_data_celle_19_resultat_01.png)
+![01_data_preparation, celle 42, resultat 1](figures/01_data_preparation_celle_42_resultat_01.png)
 
 **Lagret tekstvisning:**
 
@@ -861,7 +1100,18 @@ plt.show()
 
 ---
 
-### Celle 20 – code
+### Celle 43 – markdown
+
+### Steg 17: Illustrasjon: andregradspolynom
+
+- **Hva:** Tilpasser et andregradspolynom.
+- **Hvorfor:** For å beskrive en buet døgnprofil.
+- **Utbytte:** Tilpassede timeverdier.
+
+
+---
+
+### Celle 44 – code
 
 Kjøringsteller: `17`.
 
@@ -884,7 +1134,18 @@ y_poly_pred = poly_model.predict(X_poly)
 
 ---
 
-### Celle 21 – code
+### Celle 45 – markdown
+
+### Steg 18: Vis andregradspolynom
+
+- **Hva:** Plotter andregradstilpasningen.
+- **Hvorfor:** For å sammenligne med observasjonene.
+- **Utbytte:** En profilfigur.
+
+
+---
+
+### Celle 46 – code
 
 Kjøringsteller: `18`.
 
@@ -903,7 +1164,7 @@ plt.show()
 
 **Lagret resultat 1 – display_data:**
 
-![00_pre_processed_data, celle 21, resultat 1](figurer/00_pre_processed_data_celle_21_resultat_01.png)
+![01_data_preparation, celle 46, resultat 1](figures/01_data_preparation_celle_46_resultat_01.png)
 
 **Lagret tekstvisning:**
 
@@ -913,7 +1174,18 @@ plt.show()
 
 ---
 
-### Celle 22 – code
+### Celle 47 – markdown
+
+### Steg 19: Illustrasjon: tredjegradspolynom
+
+- **Hva:** Tilpasser et tredjegradspolynom.
+- **Hvorfor:** For å undersøke en mer fleksibel profil.
+- **Utbytte:** Tilpassede timeverdier.
+
+
+---
+
+### Celle 48 – code
 
 Kjøringsteller: `19`.
 
@@ -934,7 +1206,18 @@ y_poly_pred = poly_model.predict(X_poly)
 
 ---
 
-### Celle 23 – code
+### Celle 49 – markdown
+
+### Steg 20: Vis tredjegradspolynom
+
+- **Hva:** Plotter tredjegradstilpasningen.
+- **Hvorfor:** For å se formforskjeller.
+- **Utbytte:** En profilfigur.
+
+
+---
+
+### Celle 50 – code
 
 Kjøringsteller: `20`.
 
@@ -953,7 +1236,7 @@ plt.show()
 
 **Lagret resultat 1 – display_data:**
 
-![00_pre_processed_data, celle 23, resultat 1](figurer/00_pre_processed_data_celle_23_resultat_01.png)
+![01_data_preparation, celle 50, resultat 1](figures/01_data_preparation_celle_50_resultat_01.png)
 
 **Lagret tekstvisning:**
 
@@ -963,7 +1246,18 @@ plt.show()
 
 ---
 
-### Celle 24 – code
+### Celle 51 – markdown
+
+### Steg 21: Sammenlign tilpasningsfeil
+
+- **Hva:** Beregner MSE for de tre kurvene.
+- **Hvorfor:** For å sammenligne tilpasning til treningspunktene.
+- **Utbytte:** Tilpasningsfeil, ikke uavhengig prognoseevaluering.
+
+
+---
+
+### Celle 52 – code
 
 Kjøringsteller: `21`.
 
@@ -1012,16 +1306,55 @@ Degree 3: 0.0034516416998503657
 
 ---
 
+### Celle 53 – markdown
 
-<a id="notatbok-01"></a>
+**Kort oppsummering**
 
-## 01_data_overview.ipynb
+- MSE her måler tilpasning til de samme 24 timegjennomsnittene. Gå videre til datakvalitet; prognosemodeller og uavhengig test ligger i notebook 04.
 
-Kilde: [åpne notatboken](../../notebooks/01_data_overview.ipynb).
 
-SHA-256 av kildefilen: `68db59e215e6c909e2a6d960099df5010f3d3f6747d7bb6aaf8b31ef09a5159e`.
+---
 
-### Celle 1 – code
+
+<a id="notatbok-02"></a>
+
+## 02_data_quality.ipynb
+
+Kilde: [åpne notatboken](../../notebooks/02_data_quality.ipynb).
+
+SHA-256 av kildefilen: `0e1ab25b2a09668cc5d52f6d25d8a02fb6317611cdd2726c12b06cfc6d6604d0`.
+
+### Celle 1 – markdown
+
+# 02 – Datakvalitet og rensebeslutninger
+
+- **Formål:** Undersøk mangler, avvik, tidssoner og kommuneendringer før EDA. Rensingen her skjer i minnet; renseskriptet skriver en egen fil.
+- **Input:** `data/interim/consumption_preprocessed.csv`.
+- **Utbytte:** kvalitetskontroller og dokumentert Orkland-kriterium.
+- **Kjøring:** Velg prosjektets Python-kernel og kjør fra topp til bunn. Stier finner prosjektroten fra både rotmappen og notebookmappen.
+
+
+---
+
+### Celle 2 – markdown
+
+## 1. Datagrunnlag
+
+
+---
+
+### Celle 3 – markdown
+
+### Steg 1: Biblioteker
+
+- **Hva:** Laster pandas.
+- **Hvorfor:** For å undersøke datakvaliteten.
+- **Utbytte:** Et klart analysemiljø.
+
+
+---
+
+### Celle 4 – code
 
 Kjøringsteller: `22`.
 
@@ -1035,15 +1368,31 @@ import pandas as pd
 
 ---
 
-### Celle 2 – code
+### Celle 5 – markdown
+
+### Steg 2: Les preprosesserte data
+
+- **Hva:** Leser preprosesserte data før rensing.
+- **Hvorfor:** For å undersøke avvik før de fjernes.
+- **Utbytte:** Hele datasettet med kalenderkolonner.
+
+
+---
+
+### Celle 6 – code
 
 Kjøringsteller: `24`.
 
 **Kode:**
 
 ```python
+from pathlib import Path
+
+ROOT = next(p for p in (Path.cwd(), *Path.cwd().parents)
+            if (p / "AGENTS.md").is_file() and (p / "data").is_dir())
+
 df = pd.read_csv(
-    "../data/consumption_processed.csv",
+    ROOT / "data/interim/consumption_preprocessed.csv",
     sep=";",
     decimal=","
 )
@@ -1053,7 +1402,25 @@ df = pd.read_csv(
 
 ---
 
-### Celle 3 – code
+### Celle 7 – markdown
+
+## 2. Fullstendighet og verdier
+
+
+---
+
+### Celle 8 – markdown
+
+### Steg 3: Mangler og duplikater
+
+- **Hva:** Teller mangler og gjentatte målinger.
+- **Hvorfor:** For å kontrollere fullstendighet og entydighet.
+- **Utbytte:** Kvalitetstellinger.
+
+
+---
+
+### Celle 9 – code
 
 Kjøringsteller: `25`.
 
@@ -1098,7 +1465,18 @@ Dupliserte målinger: 0
 
 ---
 
-### Celle 4 – code
+### Celle 10 – markdown
+
+### Steg 4: Negative verdier og spredning
+
+- **Hva:** Undersøker negative volum og forbruk per målepunkt.
+- **Hvorfor:** For å skille avvik fra legitim variasjon.
+- **Utbytte:** Beskrivende statistikk.
+
+
+---
+
+### Celle 11 – code
 
 Kjøringsteller: `26`.
 
@@ -1186,7 +1564,18 @@ Name: KWH_PER_PUNKT, dtype: float64
 
 ---
 
-### Celle 5 – code
+### Celle 12 – markdown
+
+### Steg 5: Antall målepunkter
+
+- **Hva:** Kontrollerer null og negative antall.
+- **Hvorfor:** For å vurdere normaliseringsgrunnlaget.
+- **Utbytte:** Oversikt over ugyldige nevnere.
+
+
+---
+
+### Celle 13 – code
 
 Kjøringsteller: `27`.
 
@@ -1222,7 +1611,18 @@ Name: ANTALL_MÅLEPUNKT, dtype: float64
 
 ---
 
-### Celle 6 – code
+### Celle 14 – markdown
+
+### Steg 6: Høyest forbruk per målepunkt
+
+- **Hva:** Lister de største normaliserte verdiene.
+- **Hvorfor:** For å finne observasjoner som bør undersøkes.
+- **Utbytte:** Ti ekstreme observasjoner.
+
+
+---
+
+### Celle 15 – code
 
 Kjøringsteller: `28`.
 
@@ -1270,7 +1670,18 @@ Strøm: `stdout`.
 
 ---
 
-### Celle 7 – code
+### Celle 16 – markdown
+
+### Steg 7: Hvor oppstår negative verdier?
+
+- **Hva:** Fordeler negative målinger på gruppe og kommune.
+- **Hvorfor:** For å undersøke om avvikene er konsentrert.
+- **Utbytte:** Grupperte tellinger.
+
+
+---
+
+### Celle 17 – code
 
 Kjøringsteller: `29`.
 
@@ -1309,7 +1720,18 @@ Name: count, dtype: int64
 
 ---
 
-### Celle 8 – code
+### Celle 18 – markdown
+
+### Steg 8: Største forbruksvolum
+
+- **Hva:** Lister de ti største målingene.
+- **Hvorfor:** For å identifisere ekstreme volum.
+- **Utbytte:** Kandidater for nærmere kontroll.
+
+
+---
+
+### Celle 19 – code
 
 Kjøringsteller: `30`.
 
@@ -1343,7 +1765,18 @@ Strøm: `stdout`.
 
 ---
 
-### Celle 9 – code
+### Celle 20 – markdown
+
+### Steg 9: Negative verdier over tid
+
+- **Hva:** Teller negative verdier per kommune og år.
+- **Hvorfor:** For å avdekke tidsmessige mønstre.
+- **Utbytte:** En kommune–år-oversikt.
+
+
+---
+
+### Celle 21 – code
 
 Kjøringsteller: `31`.
 
@@ -1375,7 +1808,25 @@ dtype: int64
 
 ---
 
-### Celle 10 – code
+### Celle 22 – markdown
+
+## 3. Undersøk og avgrens ekstremverdier
+
+
+---
+
+### Celle 23 – markdown
+
+### Steg 10: Orkland Industri
+
+- **Hva:** Plotter industriens forbruk i Orkland.
+- **Hvorfor:** For å undersøke ekstreme observasjoner i sammenheng.
+- **Utbytte:** En tidsserie.
+
+
+---
+
+### Celle 24 – code
 
 Kjøringsteller: `32`.
 
@@ -1400,7 +1851,7 @@ orkland.plot(x="STARTTID", y="VOLUM_KWH", figsize=(12, 4))
 
 **Lagret resultat 2 – display_data:**
 
-![01_data_overview, celle 10, resultat 2](figurer/01_data_overview_celle_10_resultat_02.png)
+![02_data_quality, celle 24, resultat 2](figures/02_data_quality_celle_24_resultat_02.png)
 
 **Lagret tekstvisning:**
 
@@ -1410,7 +1861,18 @@ orkland.plot(x="STARTTID", y="VOLUM_KWH", figsize=(12, 4))
 
 ---
 
-### Celle 11 – code
+### Celle 25 – markdown
+
+### Steg 11: Tokke Industri
+
+- **Hva:** Plotter industriens forbruk i Tokke.
+- **Hvorfor:** For å sammenligne et annet avvikende forløp.
+- **Utbytte:** En tidsserie.
+
+
+---
+
+### Celle 26 – code
 
 Kjøringsteller: `33`.
 
@@ -1435,7 +1897,7 @@ tokke.plot(x="STARTTID", y="VOLUM_KWH", figsize=(12, 4))
 
 **Lagret resultat 2 – display_data:**
 
-![01_data_overview, celle 11, resultat 2](figurer/01_data_overview_celle_11_resultat_02.png)
+![02_data_quality, celle 26, resultat 2](figures/02_data_quality_celle_26_resultat_02.png)
 
 **Lagret tekstvisning:**
 
@@ -1445,7 +1907,18 @@ tokke.plot(x="STARTTID", y="VOLUM_KWH", figsize=(12, 4))
 
 ---
 
-### Celle 12 – code
+### Celle 27 – markdown
+
+### Steg 12: Avgrens Orkland-avvik
+
+- **Hva:** Finner Orkland/Industri over ti millioner kWh.
+- **Hvorfor:** For å gjøre rensekriteriet eksplisitt.
+- **Utbytte:** Rader som omfattes av kriteriet.
+
+
+---
+
+### Celle 28 – code
 
 Kjøringsteller: `34`.
 
@@ -1474,7 +1947,18 @@ Mulige feil: 8
 
 ---
 
-### Celle 13 – code
+### Celle 29 – markdown
+
+### Steg 13: Tokkes målepunkter
+
+- **Hva:** Plotter antall målepunkter.
+- **Hvorfor:** For å tolke forbruksutviklingen.
+- **Utbytte:** En supplerende tidsserie.
+
+
+---
+
+### Celle 30 – code
 
 Kjøringsteller: `35`.
 
@@ -1499,7 +1983,7 @@ tokke.plot(
 
 **Lagret resultat 2 – display_data:**
 
-![01_data_overview, celle 13, resultat 2](figurer/01_data_overview_celle_13_resultat_02.png)
+![02_data_quality, celle 30, resultat 2](figures/02_data_quality_celle_30_resultat_02.png)
 
 **Lagret tekstvisning:**
 
@@ -1509,7 +1993,18 @@ tokke.plot(
 
 ---
 
-### Celle 14 – code
+### Celle 31 – markdown
+
+### Steg 14: Filtrer dokumenterte ekstremverdier
+
+- **Hva:** Fjerner observasjoner etter Orkland-kriteriet i minnet.
+- **Hvorfor:** For å avgrense analysegrunnlaget.
+- **Utbytte:** Renset df; CSV endres av renseskriptet.
+
+
+---
+
+### Celle 32 – code
 
 Kjøringsteller: `36`.
 
@@ -1528,7 +2023,16 @@ df = df[~(
 
 ---
 
-### Celle 15 – markdown
+### Celle 33 – markdown
+
+**Kort oppsummering**
+
+- Rensekriteriet er Orkland + Industri + volum over 10 millioner kWh. Negative verdier beholdes. Kjør renseskriptet for å skrive rensede data til en separat fil.
+
+
+---
+
+### Celle 34 – markdown
 
 Eight observations from Orkland on April 14, 2026, were removed due to exceptionally high electricity consumption values of approximately 12.56 million kWh per hour. These values differed substantially from the municipality's normal consumption pattern and were treated as likely data errors.
 
@@ -1536,7 +2040,25 @@ Negative consumption values were retained because their cause could not be deter
 
 ---
 
-### Celle 16 – code
+### Celle 35 – markdown
+
+## 4. Tid og geografisk dekning
+
+
+---
+
+### Celle 36 – markdown
+
+### Steg 15: Kontroller norsk lokal tid
+
+- **Hva:** Tolker tid via UTC og konverterer til Europe/Oslo.
+- **Hvorfor:** For å kontrollere tidsgrunnlaget.
+- **Utbytte:** Tidssonebevisste tidsverdier.
+
+
+---
+
+### Celle 37 – code
 
 Kjøringsteller: `38`.
 
@@ -1569,7 +2091,18 @@ Name: STARTTID, dtype: datetime64[ns, Europe/Oslo]
 
 ---
 
-### Celle 17 – code
+### Celle 38 – markdown
+
+### Steg 16: Timer per lokal dag
+
+- **Hva:** Teller unike timer per dag.
+- **Hvorfor:** For å undersøke sommertid og dekning.
+- **Utbytte:** Dager med avvikende timetall.
+
+
+---
+
+### Celle 39 – code
 
 Kjøringsteller: `39`.
 
@@ -1610,13 +2143,24 @@ dtype: int64
 
 ---
 
-### Celle 18 – markdown
+### Celle 40 – markdown
 
 Kommune endringer
 
 ---
 
-### Celle 19 – code
+### Celle 41 – markdown
+
+### Steg 17: Flere kommunenummer per navn
+
+- **Hva:** Teller nummer per kommunenavn.
+- **Hvorfor:** For å avdekke administrative endringer.
+- **Utbytte:** Kommuner med flere nummer.
+
+
+---
+
+### Celle 42 – code
 
 Kjøringsteller: `40`.
 
@@ -1645,7 +2189,18 @@ Name: KOMMUNENUMMER, dtype: int64
 
 ---
 
-### Celle 20 – code
+### Celle 43 – markdown
+
+### Steg 18: Flere navn per kommunenummer
+
+- **Hva:** Teller navn per nummer.
+- **Hvorfor:** For å undersøke identifikatorene.
+- **Utbytte:** Nummer med flere navn.
+
+
+---
+
+### Celle 44 – code
 
 Kjøringsteller: `41`.
 
@@ -1671,7 +2226,18 @@ Series([], Name: KOMMUNE, dtype: int64)
 
 ---
 
-### Celle 21 – code
+### Celle 45 – markdown
+
+### Steg 19: Kommunedekning per år
+
+- **Hva:** Teller kommunenummer årlig.
+- **Hvorfor:** For å sammenligne geografisk dekning.
+- **Utbytte:** En årlig oversikt.
+
+
+---
+
+### Celle 46 – code
 
 Kjøringsteller: `42`.
 
@@ -1701,7 +2267,18 @@ Name: KOMMUNENUMMER, dtype: int64
 
 ---
 
-### Celle 22 – code
+### Celle 47 – markdown
+
+### Steg 20: Endringer fra 2022 til 2026
+
+- **Hva:** Sammenligner kommunenummer mellom endepunktene.
+- **Hvorfor:** For å finne endret dekning.
+- **Utbytte:** Nye og forsvunne nummer.
+
+
+---
+
+### Celle 48 – code
 
 Kjøringsteller: `43`.
 
@@ -1730,7 +2307,18 @@ Nye: set()
 
 ---
 
-### Celle 23 – code
+### Celle 49 – markdown
+
+### Steg 21: Alle år mot 2022
+
+- **Hva:** Sammenligner kommunesett mot startåret.
+- **Hvorfor:** For å kontrollere konsistens over hele perioden.
+- **Utbytte:** årsvise forskjeller.
+
+
+---
+
+### Celle 50 – code
 
 Kjøringsteller: `44`.
 
@@ -1762,9 +2350,18 @@ Strøm: `stdout`.
 
 ---
 
-### Celle 24 – markdown
+### Celle 51 – markdown
 
-## Data Quality Assessment
+**Kort oppsummering**
+
+- Tidsoverganger og kommuneendringer må tas hensyn til ved tolkning. Gå videre til EDA på det rensede datasettet.
+
+
+---
+
+### Celle 52 – markdown
+
+#### Data Quality Assessment
 
 The dataset contains approximately 40 million hourly electricity consumption records from 2022 to 2026. Several data quality checks were performed before analysis.
 
@@ -1781,15 +2378,45 @@ The dataset contains approximately 40 million hourly electricity consumption rec
 ---
 
 
-<a id="notatbok-02"></a>
+<a id="notatbok-03"></a>
 
-## 02_analysis.ipynb
+## 03_exploratory_analysis.ipynb
 
-Kilde: [åpne notatboken](../../notebooks/02_analysis.ipynb).
+Kilde: [åpne notatboken](../../notebooks/03_exploratory_analysis.ipynb).
 
-SHA-256 av kildefilen: `edd1ef0758176e0d3ab632f790eba24d302e8f6b9827fc91f05b3df2865d4105`.
+SHA-256 av kildefilen: `294e5d2bb33b9d45579b2341308aeda7ed3ac7b10afa84b7c215daeb071ab990`.
 
-### Celle 1 – code
+### Celle 1 – markdown
+
+# 03 – Utforskende dataanalyse
+
+- **Formål:** Beskriv fordelinger, sesong, døgn, uke og geografiske forskjeller i det rensede datasettet.
+- **Input:** `data/processed/consumption_cleaned.csv`.
+- **Utbytte:** EDA-figurer, gruppestatistikk og kandidatdekning.
+- **Kjøring:** Velg prosjektets Python-kernel og kjør fra topp til bunn. Stier finner prosjektroten fra både rotmappen og notebookmappen.
+
+
+---
+
+### Celle 2 – markdown
+
+## 1. Datagrunnlag
+
+
+---
+
+### Celle 3 – markdown
+
+### Steg 1: Biblioteker
+
+- **Hva:** Laster analyse- og figurbiblioteker.
+- **Hvorfor:** For å utforske forbruksmønstre.
+- **Utbytte:** Et klart analysemiljø.
+
+
+---
+
+### Celle 4 – code
 
 Kjøringsteller: `ikke angitt`.
 
@@ -1806,15 +2433,31 @@ import numpy as np
 
 ---
 
-### Celle 2 – code
+### Celle 5 – markdown
+
+### Steg 2: Les rensede data
+
+- **Hva:** Leser det rensede datasettet.
+- **Hvorfor:** For å bruke samme grunnlag videre.
+- **Utbytte:** En analysetabell.
+
+
+---
+
+### Celle 6 – code
 
 Kjøringsteller: `3`.
 
 **Kode:**
 
 ```python
+from pathlib import Path
+
+ROOT = next(p for p in (Path.cwd(), *Path.cwd().parents)
+            if (p / "AGENTS.md").is_file() and (p / "data").is_dir())
+
 df = pd.read_csv(
-    "../data/consumption_processed.csv",
+    ROOT / "data/processed/consumption_cleaned.csv",
     sep=";",
     decimal=","
 )
@@ -1824,7 +2467,25 @@ df = pd.read_csv(
 
 ---
 
-### Celle 3 – code
+### Celle 7 – markdown
+
+## 2. Fordelinger og statistikk
+
+
+---
+
+### Celle 8 – markdown
+
+### Steg 3: Fordeling per forbruksgruppe
+
+- **Hva:** Plotter positive volum på logaritmisk skala.
+- **Hvorfor:** For å vise skjeve fordelinger.
+- **Utbytte:** Histogrammer; ikke-positive verdier utelates bare her.
+
+
+---
+
+### Celle 9 – code
 
 Kjøringsteller: `7`.
 
@@ -1862,7 +2523,7 @@ plt.show()
 
 **Lagret resultat 1 – display_data:**
 
-![02_analysis, celle 3, resultat 1](figurer/02_analysis_celle_03_resultat_01.png)
+![03_exploratory_analysis, celle 9, resultat 1](figures/03_exploratory_analysis_celle_09_resultat_01.png)
 
 **Lagret tekstvisning:**
 
@@ -1872,7 +2533,18 @@ plt.show()
 
 ---
 
-### Celle 4 – code
+### Celle 10 – markdown
+
+### Steg 4: Statistikk per gruppe
+
+- **Hva:** Beregner antall, sentralmål og spredning.
+- **Hvorfor:** For å sammenligne gruppene.
+- **Utbytte:** En statistisk oppsummering.
+
+
+---
+
+### Celle 11 – code
 
 Kjøringsteller: `8`.
 
@@ -1977,7 +2649,25 @@ Privat          13317242  13111.25  5281.04  33617.94  -476.95  1110606.30
 
 ---
 
-### Celle 5 – code
+### Celle 12 – markdown
+
+## 3. Sesong-, døgn- og ukemønstre
+
+
+---
+
+### Celle 13 – markdown
+
+### Steg 5: Sesong og måneder
+
+- **Hva:** Plotter gjennomsnitt per observasjon månedlig.
+- **Hvorfor:** For å undersøke sesongmønstre.
+- **Utbytte:** Månedskurver, ikke nasjonale totaler.
+
+
+---
+
+### Celle 14 – code
 
 Kjøringsteller: `9`.
 
@@ -2019,7 +2709,7 @@ plt.show()
 
 **Lagret resultat 1 – display_data:**
 
-![02_analysis, celle 5, resultat 1](figurer/02_analysis_celle_05_resultat_01.png)
+![03_exploratory_analysis, celle 14, resultat 1](figures/03_exploratory_analysis_celle_14_resultat_01.png)
 
 **Lagret tekstvisning:**
 
@@ -2029,7 +2719,18 @@ plt.show()
 
 ---
 
-### Celle 6 – code
+### Celle 15 – markdown
+
+### Steg 6: Døgnmønster
+
+- **Hva:** Beregner forbruk per klokktime og gruppe.
+- **Hvorfor:** For å undersøke døgnvariasjon.
+- **Utbytte:** Gjennomsnittlige timeprofiler.
+
+
+---
+
+### Celle 16 – code
 
 Kjøringsteller: `10`.
 
@@ -2063,7 +2764,7 @@ plt.show()
 
 **Lagret resultat 1 – display_data:**
 
-![02_analysis, celle 6, resultat 1](figurer/02_analysis_celle_06_resultat_01.png)
+![03_exploratory_analysis, celle 16, resultat 1](figures/03_exploratory_analysis_celle_16_resultat_01.png)
 
 **Lagret tekstvisning:**
 
@@ -2073,7 +2774,18 @@ plt.show()
 
 ---
 
-### Celle 7 – code
+### Celle 17 – markdown
+
+### Steg 7: Ukedagsmønster
+
+- **Hva:** Beregner forbruk per ukedag og gruppe.
+- **Hvorfor:** For å undersøke ukevariasjon.
+- **Utbytte:** Ukedagsprofiler.
+
+
+---
+
+### Celle 18 – code
 
 Kjøringsteller: `11`.
 
@@ -2110,7 +2822,7 @@ plt.show()
 
 **Lagret resultat 1 – display_data:**
 
-![02_analysis, celle 7, resultat 1](figurer/02_analysis_celle_07_resultat_01.png)
+![03_exploratory_analysis, celle 18, resultat 1](figures/03_exploratory_analysis_celle_18_resultat_01.png)
 
 **Lagret tekstvisning:**
 
@@ -2120,7 +2832,16 @@ plt.show()
 
 ---
 
-### Celle 8 – markdown
+### Celle 19 – markdown
+
+**Kort oppsummering**
+
+- Kurvene viser gjennomsnitt per observasjon, ikke nasjonale totaler. Sammenlign både gruppenivå og tidsmønster.
+
+
+---
+
+### Celle 20 – markdown
 
 
 ### EDA: Electricity Consumption Patterns
@@ -2143,7 +2864,25 @@ plt.show()
 
 ---
 
-### Celle 9 – code
+### Celle 21 – markdown
+
+## 4. Geografiske forskjeller
+
+
+---
+
+### Celle 22 – markdown
+
+### Steg 8: Normaliser forbruk
+
+- **Hva:** Beregner kWh per gyldig målepunkt.
+- **Hvorfor:** For å sammenligne ulike kommunestørrelser.
+- **Utbytte:** Normaliserte observasjoner.
+
+
+---
+
+### Celle 23 – code
 
 Kjøringsteller: `ikke angitt`.
 
@@ -2177,7 +2916,18 @@ Name: KWH_PER_PUNKT, dtype: float64
 
 ---
 
-### Celle 10 – code
+### Celle 24 – markdown
+
+### Steg 9: Kommuner og forbruk per målepunkt
+
+- **Hva:** Sammenligner kommunenes medianer per gruppe.
+- **Hvorfor:** For å undersøke geografiske forskjeller.
+- **Utbytte:** Gruppevise kommuneprofiler.
+
+
+---
+
+### Celle 25 – code
 
 Kjøringsteller: `15`.
 
@@ -2230,7 +2980,7 @@ plt.show()
 
 **Lagret resultat 1 – display_data:**
 
-![02_analysis, celle 10, resultat 1](figurer/02_analysis_celle_10_resultat_01.png)
+![03_exploratory_analysis, celle 25, resultat 1](figures/03_exploratory_analysis_celle_25_resultat_01.png)
 
 **Lagret tekstvisning:**
 
@@ -2240,7 +2990,18 @@ plt.show()
 
 ---
 
-### Celle 11 – code
+### Celle 26 – markdown
+
+### Steg 10: Forbruk og antall målepunkter
+
+- **Hva:** Sammenstiller medianvolum og målepunkter.
+- **Hvorfor:** For å tolke forskjeller mellom kommuner.
+- **Utbytte:** Et geografisk sammenligningsgrunnlag.
+
+
+---
+
+### Celle 27 – code
 
 Kjøringsteller: `16`.
 
@@ -2283,7 +3044,7 @@ plt.show()
 
 **Lagret resultat 1 – display_data:**
 
-![02_analysis, celle 11, resultat 1](figurer/02_analysis_celle_11_resultat_01.png)
+![03_exploratory_analysis, celle 27, resultat 1](figures/03_exploratory_analysis_celle_27_resultat_01.png)
 
 **Lagret tekstvisning:**
 
@@ -2293,7 +3054,18 @@ plt.show()
 
 ---
 
-### Celle 12 – code
+### Celle 28 – markdown
+
+### Steg 11: Dekning i kandidatkommuner
+
+- **Hva:** Undersøker tidsdekning for tolv kandidater.
+- **Hvorfor:** For å støtte valg av modellutvalg.
+- **Utbytte:** Dekningstabell; endelig utvalg er ti kommuner.
+
+
+---
+
+### Celle 29 – code
 
 Kjøringsteller: `17`.
 
@@ -2711,7 +3483,16 @@ Trondheim    Forretning      2026-04-30 23:00:00+02:00         9061.0
 
 ---
 
-### Celle 13 – markdown
+### Celle 30 – markdown
+
+**Kort oppsummering**
+
+- EDA undersøker tolv kandidatkommuner. Modellgrunnlaget velger ti med skriptet select_municipalities.py; kandidatlisten er ikke det endelige utvalget.
+
+
+---
+
+### Celle 31 – markdown
 
 
 ### 6. Geographical Analysis: Electricity Consumption by Municipality

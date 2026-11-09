@@ -1,3 +1,12 @@
+"""Historisk engangsskript: figurcellene finnes allerede i notebook 04.
+
+De opprinnelige cellenumrene nedenfor gjelder før restruktureringen.
+Bruk scripts/documentation/export_notebooks.py til nye dokumentasjonseksporter.
+"""
+
+if __name__ == "__main__":
+    raise SystemExit("Arkivert engangsskript. Figurene finnes allerede; kjør export_notebooks.py.")
+
 import ast
 import base64
 import contextlib
@@ -11,7 +20,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-path = Path("notebooks/03_Feature_engineering.ipynb").resolve()
+path = Path(__file__).resolve().parents[2] / "notebooks/04_forecasting.ipynb"
 original = json.loads(path.read_text(encoding="utf-8"))
 nb = json.loads(json.dumps(original))
 
@@ -161,7 +170,7 @@ assert len(namespace["test"]) == 86310
 assert abs(namespace["test_mae"] - 9965.047) < 0.01
 assert namespace["final_model"].named_steps["regression"].early_stopping is False
 
-preview_dir = path.parent.parent / "figures" / "feature_engineering_summary"
+preview_dir = path.parent.parent / "reports/forecasting/summary_figures"
 preview_dir.mkdir(exist_ok=True)
 for number in range(1, 5):
     cell = nb["cells"][len(original["cells"]) + 2 * number - 1]

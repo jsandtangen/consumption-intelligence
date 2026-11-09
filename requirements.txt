@@ -1,0 +1,10 @@
+# Analyse og modellering. scikit-learn samsvarer med lagret modellrapport.
+numpy>=1.26,<3
+pandas>=2.2,<3
+matplotlib>=3.8,<4
+seaborn>=0.13,<0.14
+scikit-learn==1.8.0
+tzdata>=2025.1
+# Notebook-kjøring
+jupyterlab>=4,<5
+ipykernel>=6,<8

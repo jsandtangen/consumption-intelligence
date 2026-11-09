@@ -1,12 +1,12 @@
 # Full dokumentasjon av feature engineering og strømforbruksprognoser
 
-Dokumentert: 30. oktober 2026. Kilde: [03_Feature_engineering.ipynb](03_Feature_engineering.ipynb).
+Faglig dokumentasjon: 30. oktober 2026. Struktur og cellehenvisninger oppdatert: 9. november 2026. Kilde: [04_forecasting.ipynb](../../notebooks/04_forecasting.ipynb).
 
 Denne rapporten beskriver arbeidet og de lagrede resultatene i den oppgitte notatboken. Notatboken er ikke kjørt på nytt under dokumenteringen. Tallene er hentet fra lagrede celleutdata; beregnede prosentvise sammenligninger nedenfor er merket som slike. Rapporten dokumenterer dagens oppsett, ikke en full endringshistorikk fra tidligere samtaler eller sikkerhetskopier. Alle celler, all kildekode, tekstutdata og lagrede figurer følger i vedlegget.
 
 ## Leserveiledning og kildegrunnlag
 
-Dette er et detaljert arbeidsgrunnlag for rapportskriving og for en senere ChatGPT-samtale om prosjektet. Hovedteksten forklarer metode og tolkning; vedlegget bevarer hele den aktuelle notebooken som tekst og figurer. **Cellehenvisninger er nummerert fra 1 etter plassering i notebookfilen**, ikke etter Jupyters kjøringsnummer (`In [n]`). En henvisning til celle 78 betyr derfor den 78. cellen i filen.
+Dette er et detaljert metode- og resultatgrunnlag for rapportskriving og videre etterprøving. Hovedteksten forklarer metode og tolkning; vedlegget bevarer hele den aktuelle notebooken som tekst og figurer. **Cellehenvisninger er nummerert fra 1 etter plassering i notebookfilen**, ikke etter Jupyters kjøringsnummer (`In [n]`). Cellehenvisninger gjelder den oppdaterte filrekkefølgen.
 
 | Hva du trenger | Hvor du finner det |
 | --- | --- |
@@ -42,7 +42,7 @@ Målvariabelen er `VOLUM_KWH`. En observasjon gjelder et tidsintervall for en be
 
 ## 2. Datagrunnlag
 
-- Inputfil: `../data/consumption_selected.csv`, relativt til notatboken.
+- Inputfil: `data/processed/consumption_selected.csv`, relativt til notatboken.
 - CSV leses med semikolon som skilletegn og komma som desimaltegn.
 - Opprinnelig antall rader i den lagrede kjøringen: **1 115 970**.
 - Kommuner: Alta, Bergen, Bodø, Kristiansand, Oslo, Stavanger, Sunndal, Tromsø, Trondheim og Årdal.
@@ -165,7 +165,7 @@ Alle tall nedenfor gjelder trening i 2022–2024 og evaluering i 2025. MAE og RM
 | Random Forest B, beste undersøkte | 7 190,257 | 16 488,823 | 0,990 |
 | Gradient Boosting B, beste undersøkte | **7 146,641** | 16 153,297 | 0,990 |
 
-**MAE bestemmer modellvalget.** Gradient Boosting-startmodellen har RMSE 16 121,807, litt lavere enn valgt B-modells 16 153,297. Valgt modell er dermed best etter MAE blant oppsettene i tabellen, men har ikke lavest RMSE. R² med tre desimaler skiller heller ikke de beste modellene tydelig. Kilder: cellene 55 og 77.
+**MAE bestemmer modellvalget.** Gradient Boosting-startmodellen har RMSE 16 121,807, litt lavere enn valgt B-modells 16 153,297. Valgt modell er dermed best etter MAE blant oppsettene i tabellen, men har ikke lavest RMSE. R² med tre desimaler skiller heller ikke de beste modellene tydelig. Kilder: cellene 87 og 123.
 
 Ridge gir nesten samme resultat som lineær regresjon B. Lineær regresjon A er betydelig svakere enn både kalenderbasert baseline og kalenderbasert Random Forest; den store A/B-forskjellen i lineær regresjon kan derfor ikke alene brukes som et generelt anslag på nytten av historikk. Notatboken fastslår ikke én dokumentert årsak til svakheten i lineær A.
 
@@ -175,7 +175,7 @@ Random Forest B forbedrer MAE mot Random Forest A i alle ti kommuner. Den lagred
 
 ### Fullstendige valideringsresultater per forbruksgruppe
 
-Tabellen samler cellene 37 og 45. Alle målinger gjelder 2025, og Random Forest B er startmodellen med dybde 15 og minst 5 rader per blad. Disse er ikke gruppetall for den tunede Gradient Boosting-modellen.
+Tabellen samler cellene 60 og 72. Alle målinger gjelder 2025, og Random Forest B er startmodellen med dybde 15 og minst 5 rader per blad. Disse er ikke gruppetall for den tunede Gradient Boosting-modellen.
 
 | Gruppe | Modell | MAE (kWh) | RMSE (kWh) | R² |
 | --- | --- | --- | --- | --- |
@@ -194,7 +194,7 @@ Tabellen samler cellene 37 og 45. Alle målinger gjelder 2025, og Random Forest 
 
 ### Fullstendig Random Forest A/B-sammenligning per kommune
 
-Kilde: celle 51. Begge er startmodeller med identiske Random Forest-innstillinger. MAE er beregnet over alle tre grupper i hver kommune i 2025. Dette er ikke en baseline-sammenligning og ikke testresultater.
+Kilde: celle 81. Begge er startmodeller med identiske Random Forest-innstillinger. MAE er beregnet over alle tre grupper i hver kommune i 2025. Dette er ikke en baseline-sammenligning og ikke testresultater.
 
 | Kommune | MAE A (kWh) | MAE B (kWh) | Relativ MAE-reduksjon (%) |
 | --- | --- | --- | --- |
@@ -331,7 +331,7 @@ Unntaket er **Årdal Forretning**: modellens MAE er 409,18 kWh mot baseline 400,
 
 ### Komplett detaljtabell: normalisert testfeil for alle 30 kombinasjoner
 
-Kilde: celle 94. «Gj.sn. absolutt forbruk» er `mean(abs(VOLUM_KWH))` per observasjon i den aktuelle kombinasjonen. NMAE bruker denne verdien som nevner. MAE og gjennomsnittsforbruk er i kWh; NMAE er i prosent. Dette er modellens feil, ikke endring mot baseline.
+Kilde: celle 152. «Gj.sn. absolutt forbruk» er `mean(abs(VOLUM_KWH))` per observasjon i den aktuelle kombinasjonen. NMAE bruker denne verdien som nevner. MAE og gjennomsnittsforbruk er i kWh; NMAE er i prosent. Dette er modellens feil, ikke endring mot baseline.
 
 | Kommune | Forbruksgruppe | MAE (kWh) | Gj.sn. absolutt forbruk (kWh) | NMAE (%) |
 | --- | --- | --- | --- | --- |
@@ -368,7 +368,7 @@ Kilde: celle 94. «Gj.sn. absolutt forbruk» er `mean(abs(VOLUM_KWH))` per obser
 
 ### Komplett detaljtabell: sluttmodell mot historisk baseline
 
-Kilde: celle 95. Samme testobservasjoner som ovenfor. Tabellen er ordnet etter kommune og gruppe for enkel sammenligning med NMAE-tabellen; originalutskriften i vedlegget er sortert etter forbedring. Positiv forbedring betyr lavere MAE enn baseline. Relativ forbedring beregnes med baseline-MAE som nevner, ikke med gjennomsnittsforbruket.
+Kilde: celle 154. Samme testobservasjoner som ovenfor. Tabellen er ordnet etter kommune og gruppe for enkel sammenligning med NMAE-tabellen; originalutskriften i vedlegget er sortert etter forbedring. Positiv forbedring betyr lavere MAE enn baseline. Relativ forbedring beregnes med baseline-MAE som nevner, ikke med gjennomsnittsforbruket.
 
 | Kommune | Forbruksgruppe | MAE modell (kWh) | MAE baseline (kWh) | Forbedring (%) |
 | --- | --- | --- | --- | --- |
@@ -407,7 +407,7 @@ Det er fullt mulig å ha lav NMAE og liten forbedring mot baseline samtidig: År
 
 ### Gjennomsnittlig absolutt forbruk bak kommunenes NMAE
 
-Kilde: celle 92. Dette tillegget bevarer nevneren bak kommunetallene i hovedtabellen. Gjennomsnittet gjelder kommuneobservasjoner på tvers av grupper, og er ikke kommunens summerte døgn- eller timeforbruk.
+Kilde: celle 149. Dette tillegget bevarer nevneren bak kommunetallene i hovedtabellen. Gjennomsnittet gjelder kommuneobservasjoner på tvers av grupper, og er ikke kommunens summerte døgn- eller timeforbruk.
 
 | Kommune | MAE (kWh) | Gj.sn. absolutt forbruk (kWh) | NMAE (%) |
 | --- | --- | --- | --- |
@@ -484,57 +484,57 @@ Alle åtte lagrede PNG-figurer er eksportert direkte fra notebooken uten ny plot
 
 ### Figur 1. Random Forest B: faktisk og predikert forbruk i validering
 
-![Faktisk og predikert forbruk for Random Forest B, Oslo Privat 10.–16. november 2025](03_Feature_engineering_dokumentasjon_figurer/celle_59_utdata_01.png)
+![Faktisk og predikert forbruk for Random Forest B, Oslo Privat 10.–16. november 2025](figures/celle_93_utdata_01.png)
 
-**Kilde og utvalg:** Celle 59, `pred_rf_B` fra startmodellen, Oslo Privat, lokal dato fra og med 10. til før 17. november 2025, sortert etter `TIMESTAMP`. Heltrukket linje viser faktisk forbruk og stiplet linje prognosen. Begge er i kWh per observasjon. Figuren illustrerer kurveform for én kombinasjon i én uke og erstatter ikke feilmål for hele valideringsåret. Den viser ikke sluttmodellen.
+**Kilde og utvalg:** Celle 93, `pred_rf_B` fra startmodellen, Oslo Privat, lokal dato fra og med 10. til før 17. november 2025, sortert etter `TIMESTAMP`. Heltrukket linje viser faktisk forbruk og stiplet linje prognosen. Begge er i kWh per observasjon. Figuren illustrerer kurveform for én kombinasjon i én uke og erstatter ikke feilmål for hele valideringsåret. Den viser ikke sluttmodellen.
 
 ### Figur 2. Random Forest B: residual mot predikert forbruk
 
-![Residualer mot predikert forbruk for Random Forest B i 2025](03_Feature_engineering_dokumentasjon_figurer/celle_63_utdata_01.png)
+![Residualer mot predikert forbruk for Random Forest B i 2025](figures/celle_99_utdata_01.png)
 
-**Kilde og utvalg:** Første figur i celle 63, opptil 20 000 tilfeldig valgte valideringsrader, `random_state=42`. X-aksen er predikert kWh, y-aksen er faktisk minus predikert kWh. Den røde nulllinjen skiller underprediksjon over linjen fra overprediksjon under linjen. Se etter systematiske mønstre og endret feilspredning ved høyt forbruk. Diagrammet alene tester ikke uavhengighet, normalfordeling eller statistisk signifikans.
+**Kilde og utvalg:** Første figur i celle 99, opptil 20 000 tilfeldig valgte valideringsrader, `random_state=42`. X-aksen er predikert kWh, y-aksen er faktisk minus predikert kWh. Den røde nulllinjen skiller underprediksjon over linjen fra overprediksjon under linjen. Se etter systematiske mønstre og endret feilspredning ved høyt forbruk. Diagrammet alene tester ikke uavhengighet, normalfordeling eller statistisk signifikans.
 
 ### Figur 3. Random Forest B: residualfordeling
 
-![Histogram over Random Forest B-residualer på validering](03_Feature_engineering_dokumentasjon_figurer/celle_63_utdata_02.png)
+![Histogram over Random Forest B-residualer på validering](figures/celle_99_utdata_02.png)
 
-**Kilde og utvalg:** Andre figur i celle 63, samme tilfeldige utvalg som figur 2, 80 histogramintervaller. X-aksen er residual i kWh og y-aksen antall punkter i hvert intervall. De eksakte deskriptive tallene ovenfor kommer fra samtlige 262 740 valideringsrader i celle 61; histogrammet bygger på utvalget. Et smalt sentrum utelukker ikke store feil i halene.
+**Kilde og utvalg:** Andre figur i celle 99, samme tilfeldige utvalg som figur 2, 80 histogramintervaller. X-aksen er residual i kWh og y-aksen antall punkter i hvert intervall. De eksakte deskriptive tallene ovenfor kommer fra samtlige 262 740 valideringsrader i celle 96; histogrammet bygger på utvalget. Et smalt sentrum utelukker ikke store feil i halene.
 
 ### Figur 4. Sluttmodell: residualer og absolutt feil på test
 
-![Sluttmodellens residualer mot predikert forbruk og absolutte feil mot faktisk forbruk](03_Feature_engineering_dokumentasjon_figurer/celle_84_utdata_02.png)
+![Sluttmodellens residualer mot predikert forbruk og absolutte feil mot faktisk forbruk](figures/celle_137_utdata_02.png)
 
-**Kilde og utvalg:** Celle 84, opptil 20 000 testobservasjoner med `random_state=42`. Venstre panel har predikert kWh på x-aksen og residual i kWh på y-aksen. Høyre panel har faktisk kWh på x-aksen og absolutt feil i kWh på y-aksen. De utskrevne residualmålene og kvartiltabellen beregnes på hele testsettet. Kvartilene er laget med `pd.qcut(..., q=4, duplicates="drop")` på faktisk forbruk, på tvers av kommuner og grupper; de er ikke tidskvartaler.
+**Kilde og utvalg:** Celle 137, opptil 20 000 testobservasjoner med `random_state=42`. Venstre panel har predikert kWh på x-aksen og residual i kWh på y-aksen. Høyre panel har faktisk kWh på x-aksen og absolutt feil i kWh på y-aksen. De utskrevne residualmålene og kvartiltabellen beregnes på hele testsettet. Kvartilene er laget med `pd.qcut(..., q=4, duplicates="drop")` på faktisk forbruk, på tvers av kommuner og grupper; de er ikke tidskvartaler.
 
 ### Figur 5. Sluttmodell: faktisk og predikert forbruk i testuken
 
-![Sluttmodellens faktiske og predikerte forbruk, Oslo Privat 12.–18. januar 2026](03_Feature_engineering_dokumentasjon_figurer/celle_98_utdata_01.png)
+![Sluttmodellens faktiske og predikerte forbruk, Oslo Privat 12.–18. januar 2026](figures/celle_161_utdata_01.png)
 
-**Kilde og utvalg:** Celle 98, `test_eval` med `pred_test`, Oslo Privat, lokal dato fra og med 12. til før 19. januar 2026. X-aksen formateres eksplisitt i `Europe/Oslo`. Heltrukket blå linje er faktisk forbruk og stiplet oransje linje er sluttmodellens prediksjon. Aksemarkeringen `1e6` betyr at y-verdiene skal multipliseres med én million kWh.
+**Kilde og utvalg:** Celle 161, `test_eval` med `pred_test`, Oslo Privat, lokal dato fra og med 12. til før 19. januar 2026. X-aksen formateres eksplisitt i `Europe/Oslo`. Heltrukket blå linje er faktisk forbruk og stiplet oransje linje er sluttmodellens prediksjon. Aksemarkeringen `1e6` betyr at y-verdiene skal multipliseres med én million kWh.
 
 **Visuell observasjon:** I dette utsnittet ligger prognosen under faktisk forbruk tidlig i uken og over faktisk forbruk i de siste dagene. Dette viser at feilretningen kan skifte over kort tid. Det er ikke grunnlag for å konkludere med årsaken, eller at denne uken representerer hele testperioden. Ingen særskilt uke-MAE er skrevet ut i notebooken.
 
 ### Figur 6. Sluttmodell: NMAE for alle kommune–gruppe-kombinasjoner
 
-![Varmekart med NMAE for ti kommuner og tre forbruksgrupper i testperioden](03_Feature_engineering_dokumentasjon_figurer/celle_100_utdata_01.png)
+![Varmekart med NMAE for ti kommuner og tre forbruksgrupper i testperioden](figures/celle_164_utdata_01.png)
 
-**Kilde og beregning:** Celle 100, pivotering av `detailed_results` fra celle 94. Rader er kommuner, kolonner er Forretning, Industri og Privat. Hver rute viser NMAE for januar–april 2026. Fargeskalaen starter ved 0; mørkere rød betyr høyere relativ feil. Lavere verdi er bedre.
+**Kilde og beregning:** Celle 164, pivotering av `detailed_results` fra celle 152. Rader er kommuner, kolonner er Forretning, Industri og Privat. Hver rute viser NMAE for januar–april 2026. Fargeskalaen starter ved 0; mørkere rød betyr høyere relativ feil. Lavere verdi er bedre.
 
 **Tolkning:** Oslo Industri skiller seg ut med 28,78 %, mens Sunndal Industri og Årdal Industri ligger på 0,55 % og 0,79 %. Kommunenes samlede NMAE kan skjule betydelig gruppevariasjon. Fargene viser normalisert feil og kan ikke brukes til å lese av hvilken kombinasjon som bidrar mest til total absolutt kWh-feil. Dette er heller ikke et kart over forbedring mot baseline.
 
 ### Figur 7. Sluttmodell og baseline: MAE per testmåned
 
-![Månedlig MAE for Gradient Boosting B og LAG_7D-baseline i januar–april 2026](03_Feature_engineering_dokumentasjon_figurer/celle_102_utdata_01.png)
+![Månedlig MAE for Gradient Boosting B og LAG_7D-baseline i januar–april 2026](figures/celle_167_utdata_01.png)
 
-**Kilde og beregning:** Celle 102, kun `Periode == "Uavhengig test"` fra månedstabellen i celle 96. Blå stolper viser sluttmodellen, grå viser `LAG_7D`. Lavere er bedre. Tall over stolpene er avrundet til hele kWh; kapittel 12 bevarer to desimaler.
+**Kilde og beregning:** Celle 167, kun `Periode == "Uavhengig test"` fra månedstabellen i celle 156. Blå stolper viser sluttmodellen, grå viser `LAG_7D`. Lavere er bedre. Tall over stolpene er avrundet til hele kWh; kapittel 12 bevarer to desimaler.
 
 **Tolkning:** Modellen har lavere MAE i januar, mars og april, men høyere MAE i februar. Samlet forbedring skal beregnes fra alle testobservasjoner, ikke fra gjennomsnittet av fire månedlige forbedringsprosenter. De fire månedene inneholder ulikt antall rader.
 
 ### Figur 8. Modellutvalg: MAE på validering
 
-![Modellsammenligning etter MAE i 2025, trent på 2022–2024](03_Feature_engineering_dokumentasjon_figurer/celle_104_utdata_01.png)
+![Modellsammenligning etter MAE i 2025, trent på 2022–2024](figures/celle_170_utdata_01.png)
 
-**Kilde og beregning:** Celle 104, sju oppsett sortert etter MAE. Beste undersøkte Random Forest B og Gradient Boosting B brukes i figuren. Ridge B, Gradient Boosting-startmodellen og den kontrollerte Gradient Boosting A-modellen er ikke med i dette plottet; flere resultater finnes i kapittel 9. Alle viste modeller bruker 2025 som evaluering, ikke testsettet.
+**Kilde og beregning:** Celle 170, sju oppsett sortert etter MAE. Beste undersøkte Random Forest B og Gradient Boosting B brukes i figuren. Ridge B, Gradient Boosting-startmodellen og den kontrollerte Gradient Boosting A-modellen er ikke med i dette plottet; flere resultater finnes i kapittel 9. Alle viste modeller bruker 2025 som evaluering, ikke testsettet.
 
 **Tolkning og presentasjonsbegrensning:** Gradient Boosting B har lavest MAE blant de viste modellene. Den svært høye feilen til lineær A gjør at forskjellene mellom de beste modellene blir små visuelt på denne akseskalaen. Bruk de numeriske tabellene for en presis sammenligning. Figuren dokumenterer ikke statistisk signifikans eller at forskjellen på om lag 43,62 kWh mot tunet Random Forest vil gjenta seg på andre perioder.
 
@@ -581,7 +581,7 @@ Det er derfor avgjørende å skille mellom:
 | Antatt tilgjengelighet | Siste relevante `SLUTTID` pluss én time |
 | Faktisk publisering | Ikke dokumentert i notebooken |
 
-**Illustrasjon med datoene fra celle 57:** For måldag 17. november 2025 utstedes prognosen 16. november kl. 00.00. `LAG_3D` og `MEAN_3D` bruker 14. november; `LAG_7D` bruker 10. november. For måltimen kl. 18 brukes kl. 18 på de to historiske datoene. Hele døgnmiddelverdien for 14. november er den samme inputverdien for alle målradene i samme kommune–gruppe på 17. november. Datoene for utstedelse og D−7 i denne forklaringen er avledet fra kodens regler; tallverdiene i kapittel 10 er lagret i celle 57.
+**Illustrasjon med datoene fra celle 90:** For måldag 17. november 2025 utstedes prognosen 16. november kl. 00.00. `LAG_3D` og `MEAN_3D` bruker 14. november; `LAG_7D` bruker 10. november. For måltimen kl. 18 brukes kl. 18 på de to historiske datoene. Hele døgnmiddelverdien for 14. november er den samme inputverdien for alle målradene i samme kommune–gruppe på 17. november. Datoene for utstedelse og D−7 i denne forklaringen er avledet fra kodens regler; tallverdiene i kapittel 10 er lagret i celle 90.
 
 ### 15.3 Tre ulike sammenligninger
 
@@ -722,14 +722,14 @@ Null duplikater gjelder den kontrollerte nøkkelen kommune, gruppe og faktisk `T
 
 | Kontroll | Omfang | Lagret utfall | Hva den ikke bekrefter |
 | --- | --- | --- | --- |
-| Duplikater på faktisk tidspunkt | Alle 1 115 970 rader etter featurekobling, celle 10 | 0 | Unik lokal time eller korrekt rådatakilde |
-| Manglende historikk etter filtrering | 1 110 630 rader, celle 15 | 0 i hver av tre features | Fravær av mangler i alle andre kolonner |
-| Direkte lagoppslag | 1 000 tilfeldig valgte valideringsrader, opptil to lagkontroller per rad, celle 65 | 0 registrerte avvik | En uttømmende verdi-for-verdi-kontroll av hele datasettet |
-| Direkte døgnmiddeloppslag | 1 000 tilfeldig valgte valideringsrader, celle 67 | 0 registrerte avvik | At kildedøgnet alltid er komplett eller verdiene publisert |
-| Historisk dato før utstedelsesdato | Alle komplette rader, celle 69 | 0 ugyldige D−3 og D−7 | Time- og publiseringspresis tilgjengelighet |
-| Intervallslutt + én time | Alle komplette rader og alle tre historikkvariabler, celle 71 | 0 manglende, sene eller eksakt samtidige tilgjengelighetstider | Faktiske publiserings- eller revisjonstidspunkter |
+| Duplikater på faktisk tidspunkt | Alle 1 115 970 rader etter featurekobling, celle 16 | 0 | Unik lokal time eller korrekt rådatakilde |
+| Manglende historikk etter filtrering | 1 110 630 rader, celle 24 | 0 i hver av tre features | Fravær av mangler i alle andre kolonner |
+| Direkte lagoppslag | 1 000 tilfeldig valgte valideringsrader, opptil to lagkontroller per rad, celle 103 | 0 registrerte avvik | En uttømmende verdi-for-verdi-kontroll av hele datasettet |
+| Direkte døgnmiddeloppslag | 1 000 tilfeldig valgte valideringsrader, celle 106 | 0 registrerte avvik | At kildedøgnet alltid er komplett eller verdiene publisert |
+| Historisk dato før utstedelsesdato | Alle komplette rader, celle 109 | 0 ugyldige D−3 og D−7 | Time- og publiseringspresis tilgjengelighet |
+| Intervallslutt + én time | Alle komplette rader og alle tre historikkvariabler, celle 112 | 0 manglende, sene eller eksakt samtidige tilgjengelighetstider | Faktiske publiserings- eller revisjonstidspunkter |
 
-I celle 65 telles bare avvik når et historisk oppslag finnes. Det lagres ikke et separat antall sammenligninger som faktisk ble utført; man skal derfor ikke omtale dette som «2 000 bekreftede oppslag». Celle 67 behandler manglende historikk som feil. Begge bruker de samme 1 000 uttrukne radene når inputrekkefølge og `random_state=42` er de samme.
+I celle 103 telles bare avvik når et historisk oppslag finnes. Det lagres ikke et separat antall sammenligninger som faktisk ble utført; man skal derfor ikke omtale dette som «2 000 bekreftede oppslag». Celle 106 behandler manglende historikk som feil. Begge bruker de samme 1 000 uttrukne radene når inputrekkefølge og `random_state=42` er de samme.
 
 Selv en bestått kontroll av `SLUTTID` pluss antatt forsinkelse kan ikke utelukke at CSV-verdier er korrigert senere. Notebooken bruker ingen historiske publiseringsversjoner eller registrerte mottakstider. En operativ vurdering trenger både publiseringstid og eventuelle revisjoner, dersom slike forekommer. Dette er en avgrensning av hva testen beviser, ikke en påstand om at data faktisk er revidert.
 
@@ -787,7 +787,7 @@ Denne innstillingen forhindrer ikke alle mulige former for lekkasje; den løser 
 
 Det kjøres fem manuelt angitte Random Forest-kombinasjoner og fem manuelt angitte Gradient Boosting-kombinasjoner, hver trent på samme 2022–2024 og vurdert med MAE på samme 2025. Det brukes ikke `GridSearchCV`, tilfeldig søk, Bayes-optimalisering, rullerende kryssvalidering eller et fullstendig kartesisk produkt av alle parameterverdier. Antall forsøk i tabellene er derfor fem per familie, og startinnstillinger inngår blant forsøkene.
 
-Deretter opprettes nye beste modeller med eksplisitt hardkodede valgte parametere og trenes på nytt i celle 77. `clone` kopierer konfigurasjonen uten å videreføre den ferdigtrente tilstanden. Det betyr også at sluttmodellen ikke bare er 2025-modellen som fortsetter å trene; den tilpasses på nytt fra start på den sammenslåtte perioden.
+Deretter opprettes nye beste modeller med eksplisitt hardkodede valgte parametere og trenes på nytt i celle 123. `clone` kopierer konfigurasjonen uten å videreføre den ferdigtrente tilstanden. Det betyr også at sluttmodellen ikke bare er 2025-modellen som fortsetter å trene; den tilpasses på nytt fra start på den sammenslåtte perioden.
 
 Notebooken logger ikke treningstid, prediksjonstid, minnebruk, maskinvare, antall CPU-kjerner eller operativ kostnad. Det er derfor ikke dokumentert hvilken modell som er raskest eller mest ressursøkonomisk.
 
@@ -811,7 +811,7 @@ Forbedring (%) = 100 × (MAE_referanse − MAE_modell) / MAE_referanse
 
 MAE og RMSE er i kWh; R² er uten enhet; NMAE og forbedring angis i prosent. NMAE-formelen er ekvivalent med forholdet mellom total absolutt feil og totalt absolutt faktisk forbruk innen samme delmengde. Den er ikke gjennomsnittet av prosentfeilen til hver observasjon. Forbedring i prosent krever en eksplisitt referanse, og kan være negativ.
 
-Notebooken har en nullnevnerkontroll ved NMAE per kommune–gruppe og ved forbedring per kombinasjon/måned: hvis nevneren ikke er positiv, blir resultatet `NaN`. Kommune-NMAE i celle 92 har ikke en tilsvarende eksplisitt guard. De viste nevnerne er positive. Dette er en beskrivelse av koden, ikke et problem påvist i de lagrede resultatene.
+Notebooken har en nullnevnerkontroll ved NMAE per kommune–gruppe og ved forbedring per kombinasjon/måned: hvis nevneren ikke er positiv, blir resultatet `NaN`. Kommune-NMAE i celle 149 har ikke en tilsvarende eksplisitt guard. De viste nevnerne er positive. Dette er en beskrivelse av koden, ikke et problem påvist i de lagrede resultatene.
 
 ### 19.2 Hvordan resultater på tvers av grupper skal leses
 
@@ -842,7 +842,7 @@ Tabellen nedenfor er **beregnet under dokumenteringen fra de avrundede tallene i
 | Beste Random Forest B → beste Gradient Boosting B | Validering 2025 | 43,616 | 0,61 % |
 | Historisk baseline → sluttmodell B | Test januar–april 2026 | 2 655,599 | 21,04 % |
 
-Den kontrollerte Gradient Boosting A/B-reduksjonen på 1 976,10 kWh og 21,66 % er allerede beregnet og skrevet ut av notebooken fra uavrundede verdier i celle 78. Den er derfor ikke regenerert fra todesimalstabellen her.
+Den kontrollerte Gradient Boosting A/B-reduksjonen på 1 976,10 kWh og 21,66 % er allerede beregnet og skrevet ut av notebooken fra uavrundede verdier i celle 125. Den er derfor ikke regenerert fra todesimalstabellen her.
 
 Selv om MAE øker fra omtrent 7 146,64 på valideringsåret til 9 965,05 på testperioden, er dette ikke en kontrollert måling av tidsmessig degradering. Periodene har forskjellig sesongsammensetning og bruker modeller trent på forskjellige tidsintervaller. En årsak som temperatur, ferier, regimeendring eller manglende representasjon er ikke dokumentert av denne sammenligningen alene.
 
@@ -850,7 +850,7 @@ Selv om MAE øker fra omtrent 7 146,64 på valideringsåret til 9 965,05 på tes
 
 Residualgjennomsnittets positive fortegn på test tilsvarer netto underprediksjon i kWh på tvers av radene. Det er et annet utsagn enn at modellen oftest underpredikerer: bare 49,38 % av radene har positiv residual, mens 50,62 % har negativ. Prosentene er avrundet; en eventuell eksakt-nullandel er ikke skrevet ut separat.
 
-Kvartilene i celle 84 inneholder nesten like mange rader, men det høyeste forbruksintervallet har MAE 24 295,87 kWh mot 1 260,56 i det laveste. Denne tabellen sammenligner forbruksnivå på tvers av serier. Den isolerer ikke effekten av forbruk fra kommune, gruppe, måned eller andre forhold og bør ikke omtales som en kausal test av topplastfeil.
+Kvartilene i celle 137 inneholder nesten like mange rader, men det høyeste forbruksintervallet har MAE 24 295,87 kWh mot 1 260,56 i det laveste. Denne tabellen sammenligner forbruksnivå på tvers av serier. Den isolerer ikke effekten av forbruk fra kommune, gruppe, måned eller andre forhold og bør ikke omtales som en kausal test av topplastfeil.
 
 <a id="kapittel-20"></a>
 
@@ -896,7 +896,7 @@ Mulige neste undersøkelser kan være å bekrefte publiseringstid, kontrollere k
 
 ### 21.1 Hva dette øyeblikksbildet bevarer
 
-Vedlegget bevarer 104 celler: 54 kodeceller og 50 Markdown-celler, med 47 lagrede tekstutdata og 8 lagrede figurutdata. Det finnes ingen lagrede feilutdata i notebooken. Kun importcellen (celle 2) har ingen output blant kodecellene. Alle åtte PNG-er eksporteres byte-for-byte fra notebookfilen; grafdataene er ikke rekonstruert eller plottet på nytt.
+Vedlegget bevarer 104 celler: 54 kodeceller og 50 Markdown-celler, med 47 lagrede tekstutdata og 8 lagrede figurutdata. Det finnes ingen lagrede feilutdata i notebooken. Kun importcellen (celle 5) har ingen output blant kodecellene. Alle åtte PNG-er eksporteres byte-for-byte fra notebookfilen; grafdataene er ikke rekonstruert eller plottet på nytt.
 
 Det at ingen feil er lagret, betyr ikke at hele notebooken er kjørt sammenhengende fra en ren kjerne. Notebooken inneholder ikke råprediksjonene, alle tilpassede modellobjekter eller CSV-innholdet som separate vedleggsfiler. Full presisjon på beregninger som bare er skrevet ut avrundet, kan derfor ikke gjenopprettes fra Markdown alene.
 
@@ -907,7 +907,7 @@ Det at ingen feil er lagret, betyr ikke at hele notebooken er kjørt sammenhenge
 | Notebookformat | Filens `nbformat`/`nbformat_minor` | 4.5 |
 | Kernelnavn | Notebookmetadata | `python3`, visningsnavn Python 3 |
 | Python-versjon i metadata | `language_info.version` | 3.11.1 |
-| scikit-learn i kontrollutskrift | Celle 81 | 1.8.0 |
+| scikit-learn i kontrollutskrift | Celle 132 | 1.8.0 |
 | pandas, NumPy og Matplotlib-versjoner for kjøringen | Ikke skrevet ut | Ukjent i dette øyeblikksbildet |
 | Datakildens versjon/hash | Ikke skrevet ut | Ukjent i dette øyeblikksbildet |
 | Kjøringsdato og varighet | Ikke logget per celle | Ikke fastslått fra kilden |
@@ -918,20 +918,20 @@ Python-versjonen i metadata er ikke en garanti for hvilken tolk som produserte a
 
 | Plass i filen | Oppgave | Lagret kjøringsnummer |
 | --- | --- | --- |
-| Celle 75 | Gradient Boosting-tuning | 89 |
-| Celle 77 | Beste RF/GB på validering | 103 |
-| Celle 78 | Kontrollert Gradient Boosting A/B | 104 |
-| Celle 80 | Trening av sluttmodell | 92 |
-| Celle 81 | Kontroll av early stopping | 105 |
-| Celle 83 | Samlet testevaluering | 106 |
-| Celle 104 | Siste oppsummeringsfigur | 118 |
+| Celle 120 | Gradient Boosting-tuning | 89 |
+| Celle 123 | Beste RF/GB på validering | 103 |
+| Celle 125 | Kontrollert Gradient Boosting A/B | 104 |
+| Celle 130 | Trening av sluttmodell | 92 |
+| Celle 132 | Kontroll av early stopping | 105 |
+| Celle 135 | Samlet testevaluering | 106 |
+| Celle 170 | Siste oppsummeringsfigur | 118 |
 
 Sluttmodellens lagrede treningscelle har altså et lavere kjøringsnummer enn cellen som nå oppretter `best_gb`. Dette **beviser ikke at tallene er feil**, men gjør at en sammenhengende kjøring med akkurat den nå lagrede koden ikke kan bekreftes bare fra filen. `.clone(best_gb)` er riktig dokumentert som kodeflyt; hvorvidt alle lagrede objekter var produsert av nøyaktig samme kildeversjon, krever en ny ren kjøring. Den er ikke gjort her.
 
 ### 21.4 Praktisk arbeidsflyt ved senere reproduksjon
 
 1. Bevar dette øyeblikksbildet og notebookfilen som kilde for de eksisterende rapporttallene.
-2. Bruk prosjektets Python-tolk på Windows: `.\.venv\Scripts\python.exe`. Notebooken forventer at arbeidskatalogen ved CSV-lesing er `notebooks`, siden banen er `../data/consumption_selected.csv`.
+2. Bruk prosjektets Python-tolk på Windows: `.\.venv\Scripts\python.exe`. Notebooken forventer at arbeidskatalogen ved CSV-lesing er `notebooks`, siden banen er `data/processed/consumption_selected.csv`.
 3. Kontroller filversjon, pakkeversjoner og datagrunnlag før en ny kjøring. Behold Europe/Oslo-reglene, `early_stopping=False` og den kronologiske oppdelingen.
 4. Kjør alle celler fra toppen i en ny kjerne. Celler for modeller og etterfølgende figurer er avhengige av objekter opprettet tidligere; de er ikke selvstendige skript.
 5. Sammenlign radantall, historikkontroller, valideringstabeller, valgt konfigurasjon, iterasjoner og testtall med dette dokumentet. Forklar eventuelle forskjeller før rapporten oppdateres.
@@ -943,7 +943,7 @@ Dette er en beskrivelse av hvordan forsøket kan etterprøves senere, ikke en p�
 
 Hovedteksten bruker norsk desimalkomma og mellomrom som tusenskille. Originalutdataene i vedlegget beholder Python-formatet, der punktum er desimaltegn og komma kan være tusenskille. `9,965.047` i originalutskriften betyr derfor **9 965,047 kWh**, ikke 9,965047 kWh.
 
-Mange hovedtabeller bruker tre desimaler fra originalutdata; tuning, detaljer og måneder bruker to. R² for test er 0,9854 i celle 83 og 0,985 i celle 90 etter grovere avrunding. Modellens resultat har ikke endret seg mellom disse to visningene bare fordi antall desimaler er forskjellig.
+Mange hovedtabeller bruker tre desimaler fra originalutdata; tuning, detaljer og måneder bruker to. R² for test er 0,9854 i celle 135 og 0,985 i celle 146 etter grovere avrunding. Modellens resultat har ikke endret seg mellom disse to visningene bare fordi antall desimaler er forskjellig.
 
 Kilden skriver ut mange resultater med `.round(...).to_string(index=False)`, som bevarer alle rader i disse tabellene. Forskjeller i beregnet prosent på siste desimal kan skyldes at hovedtabellene viser avrundede tall. Ikke legg til flere tilsynelatende presise desimaler enn kildegrunnlaget gir dekning for.
 
@@ -981,7 +981,7 @@ Historisk forbruk er nyttig i de undersøkte oppsettene, og den kontrollerte A/B
 
 Publiseringstid, kalenderkonsistens, manglende full årsdekning på test og ulik kjøringsrekkefølge er metodiske begrensninger. Det finnes ikke dokumentert støtte for å tilskrive februarfeilen en bestemt værhendelse, forklare industrifeil med bestemte bedrifter eller fastslå at været ville gitt en bestemt forbedringsprosent.
 
-### 22.5 Påstander en senere ChatGPT ikke skal gjøre
+### 22.5 Påstander uten dokumentasjonsgrunnlag
 
 | Unøyaktig påstand | Presis formulering |
 | --- | --- |
@@ -1006,94 +1006,152 @@ Henvisningene nedenfor gjør det mulig å finne grunnlaget uten å gjette ut fra
 
 | Celler | Innhold | Viktige resultater/objekter |
 | --- | --- | --- |
-| [1–4](#celle-1) | Problemstilling, import og kalenderkoding | `calendar_features`, ni A-input |
-| [5–7](#celle-5) | Historikk og tidssoner | `LAG_3D`, `LAG_7D`, `MEAN_3D` |
-| [8–12](#celle-8) | Antall, mangler, duplikater, berørte datoer | 1 115 970 rader, manglende historikk, 0 duplikater |
-| [13–15](#celle-13) | Filtrering | 1 110 630 komplette rader |
-| [16–20](#celle-16) | Kronologisk oppdeling og X/y | 761 580 / 262 740 / 86 310 |
-| [21–22](#celle-21) | Numeriske/kategoriske transformasjoner | `preprocessor_A/B` |
-| [23–27](#celle-23) | Kalenderbaseline og ukesbaseline | `val_baseline_A`, `y_pred_B` |
-| [28–35](#celle-28) | Lineær A/B og baseline-sammenligning | `pred_A`, `pred_B` |
-| [36–39](#celle-36) | Gruppeevaluering og Ridge | `group_results`, `pred_ridge_B` |
-| [40–45](#celle-40) | Random Forest B og grupperesultater | `rf_B`, `pred_rf_B` |
-| [46–51](#celle-46) | Random Forest A og kommunevis A/B | `rf_A`, `municipality_results` |
-| [52–55](#celle-52) | Gradient Boosting B-startmodell | `gb_B`, `pred_gb_B` |
-| [56–57](#celle-56) | Konkret kontrollrad | Årdal Industri, 17.11.2025 kl. 18 |
-| [58–63](#celle-58) | RF-tidsserie og residualanalyse | Figur 1–3 |
-| [64–67](#celle-64) | Direkte stikkprøvekontroller | 0 avvik for lag og døgnmiddel |
-| [68–71](#celle-68) | Dato- og tilgjengelighetskontroll | 0 tidsoverskridelser under antakelse |
-| [72–75](#celle-72) | Fem RF- og fem GB-parameterforsøk | `rf_tuning_results`, `gb_tuning_results` |
-| [76–77](#celle-76) | Beste undersøkte RF/GB | `best_rf`, `best_gb`, `pred_best_gb` |
-| [78](#celle-78) | Kontrollert Gradient Boosting A/B | 21,66 % MAE-reduksjon |
-| [79–80](#celle-79) | Sluttrening på 2022–2025 | `final_model`, 1 024 320 rader |
-| [81](#celle-81) | Bibliotekversjon og early-stopping-kontroll | scikit-learn 1.8.0, 200/300/300 iterasjoner |
-| [82–84](#celle-82) | Samlet test og GB-residualer | MAE 9 965,047, figur 4 |
-| [85–90](#celle-85) | Test per gruppe/kommune og mot baseline | `test_eval`, `test_comparison` |
-| [91–94](#celle-91) | NMAE og gjennomsnittsforbruk | `relative_results`, `detailed_results` |
-| [95](#celle-95) | Alle 30 testkombinasjoner mot baseline | `baseline_comparison`, ett unntak |
-| [96](#celle-96) | Månedlige resultater | Tolv valideringsmåneder og fire testmåneder |
-| [97–98](#celle-97) | Testtidsserie for GB | Figur 5 |
-| [99–100](#celle-99) | NMAE-varmekart | Figur 6 |
-| [101–102](#celle-101) | Månedlig test-MAE mot baseline | Figur 7 |
-| [103–104](#celle-103) | Modellutvalg etter validerings-MAE | Figur 8 |
+| [2–8](#celle-2) | Problemstilling, import og kalenderkoding | `calendar_features`, ni A-input |
+| [9–12](#celle-9) | Historikk og tidssoner | `LAG_3D`, `LAG_7D`, `MEAN_3D` |
+| [13–20](#celle-13) | Antall, mangler, duplikater, berørte datoer | 1 115 970 rader, manglende historikk, 0 duplikater |
+| [21–24](#celle-21) | Filtrering | 1 110 630 komplette rader |
+| [25–33](#celle-25) | Kronologisk oppdeling og X/y | 761 580 / 262 740 / 86 310 |
+| [34–36](#celle-34) | Numeriske/kategoriske transformasjoner | `preprocessor_A/B` |
+| [38–45](#celle-38) | Kalenderbaseline og ukesbaseline | `val_baseline_A`, `y_pred_B` |
+| [46–57](#celle-46) | Lineær A/B og baseline-sammenligning | `pred_A`, `pred_B` |
+| [58–63](#celle-58) | Gruppeevaluering og Ridge | `group_results`, `pred_ridge_B` |
+| [64–72](#celle-64) | Random Forest B og grupperesultater | `rf_B`, `pred_rf_B` |
+| [73–81](#celle-73) | Random Forest A og kommunevis A/B | `rf_A`, `municipality_results` |
+| [82–87](#celle-82) | Gradient Boosting B-startmodell | `gb_B`, `pred_gb_B` |
+| [88–90](#celle-88) | Konkret kontrollrad | Årdal Industri, 17.11.2025 kl. 18 |
+| [91–99](#celle-91) | RF-tidsserie og residualanalyse | Figur 1–3 |
+| [100–106](#celle-100) | Direkte stikkprøvekontroller | 0 avvik for lag og døgnmiddel |
+| [107–112](#celle-107) | Dato- og tilgjengelighetskontroll | 0 tidsoverskridelser under antakelse |
+| [114–120](#celle-114) | Fem RF- og fem GB-parameterforsøk | `rf_tuning_results`, `gb_tuning_results` |
+| [121–123](#celle-121) | Beste undersøkte RF/GB | `best_rf`, `best_gb`, `pred_best_gb` |
+| [125](#celle-125) | Kontrollert Gradient Boosting A/B | 21,66 % MAE-reduksjon |
+| [127–130](#celle-127) | Sluttrening på 2022–2025 | `final_model`, 1 024 320 rader |
+| [132](#celle-132) | Bibliotekversjon og early-stopping-kontroll | scikit-learn 1.8.0, 200/300/300 iterasjoner |
+| [133–137](#celle-133) | Samlet test og GB-residualer | MAE 9 965,047, figur 4 |
+| [138–146](#celle-138) | Test per gruppe/kommune og mot baseline | `test_eval`, `test_comparison` |
+| [147–152](#celle-147) | NMAE og gjennomsnittsforbruk | `relative_results`, `detailed_results` |
+| [154](#celle-154) | Alle 30 testkombinasjoner mot baseline | `baseline_comparison`, ett unntak |
+| [156](#celle-156) | Månedlige resultater | Tolv valideringsmåneder og fire testmåneder |
+| [158–161](#celle-158) | Testtidsserie for GB | Figur 5 |
+| [162–164](#celle-162) | NMAE-varmekart | Figur 6 |
+| [165–167](#celle-165) | Månedlig test-MAE mot baseline | Figur 7 |
+| [168–170](#celle-168) | Modellutvalg etter validerings-MAE | Figur 8 |
 
+
+
+
+<!-- CELL_APPENDIX -->
 <a id="cellevedlegg"></a>
-
 ## Vedlegg: Full cellevis gjengivelse
 
-Vedlegget bevarer alle celler i filrekkefølge, celle-ID-er, lagrede kjøringsnumre, full kildekode, opprinnelig Markdown og samtlige lagrede tekst- og figurutdata. Markdown-kilden er inngjerdet som kode for at opprinnelige overskrifter ikke skal bryte dokumentets disposisjon. Originale skrivefeil er bevart i kildegjengivelsen. Figurer er eksportert direkte, uten ny plotting. `text/plain` som følger en PNG, er også bevart. Notebooken inneholder ingen andre MIME-typer i output. Ingen rå base64-strenger er satt inn i leseteksten; de identiske PNG-filene er bilderepresentasjonen av disse utdataene.
+Eksporten bevarer kode, Markdown og alle lagrede utdata. Ingen celler er kjørt på nytt.
 
-Kildens SHA-256: `6B4DF0C070B249AFC0D80C09EF2FCD6DB01AF99D2545DC8B1408153CE237E6F2`.
+Kildens SHA-256: `f9e7933ba83969ff62024b0c43335bc99fca0a8d873512f17a01dad516cd4f40`.
 
-Notebookformat: 4.5. Kernel: Python 3 (`python3`). Lagret Python-versjon i metadata: 3.11.1. Antall celler: 104 (54 kodeceller og 50 Markdown-celler). Utdata: 47 tekstutdata (`stream`) og 8 figurutdata (`display_data`). Ingen lagrede feilutdata. Kjøringsnumre er tilstandsmetadata, ikke dokumentasjon av kjøringsdato eller en ny sammenhengende kjøring.
+Notebookformat: 4.5. Antall celler: 171.
 
 <a id="celle-1"></a>
-
 ### Celle 1 — markdown
+
+Celle-ID: `workflow-introduction`.
+
+```markdown
+# 04 – Feature engineering, modellutvikling og evaluering
+
+- **Formål:** Sammenlign kalenderbaserte modeller (A) med modeller som også bruker historisk forbruk (B). Velg modell på 2025, og vurder sluttmodellen på januar–april 2026.
+- **Input:** `data/processed/consumption_selected.csv`.
+- **Utbytte:** features, modellforsøk, validering og uavhengige testresultater.
+- **Kjøring:** Velg prosjektets Python-kernel og kjør fra topp til bunn. Stier finner prosjektroten fra både rotmappen og notebookmappen.
+
+- **Leserekkefølge:** Feature engineering → dataklargjøring → modeller → tuning → evaluering.
+- **Organisering:** Stegene beholdes i én notebook fordi de deler features, modellobjekter og prediksjoner i minnet. Seksjonene skiller ansvaret uten skjulte avhengigheter mellom notebooker.
+
+```
+
+<a id="celle-2"></a>
+### Celle 2 — markdown
 
 Celle-ID: `fe709bc0`.
 
-````markdown
+```markdown
 - Hvor mye bedre kan vi predikere strømforbruk når vi bruker historisk forbruk i tillegg til kalenderinformasjon?
 - Hvilken modell gir de beste prognosene på nye data?
-````
+```
 
-<a id="celle-2"></a>
+<a id="celle-3"></a>
+### Celle 3 — markdown
 
-### Celle 2 — code
+Celle-ID: `workflow-phase-2`.
+
+```markdown
+## 1. Datagrunnlag og feature engineering
+
+```
+
+<a id="celle-4"></a>
+### Celle 4 — markdown
+
+Celle-ID: `workflow-step-2`.
+
+```markdown
+### Steg 1: Biblioteker
+
+- **Hva:** Laster pandas og NumPy.
+- **Hvorfor:** For å klargjøre modellgrunnlaget.
+- **Utbytte:** Et klart analysemiljø.
+
+```
+
+<a id="celle-5"></a>
+### Celle 5 — code
 
 Celle-ID: `38f09ae1`.
 
-Lagret kjøringsnummer: `53`.
-
-````python
+```python
 import pandas as pd
 import numpy as np
-````
+```
+
+Lagret kjøringsnummer: `53`.
 
 Ingen lagrede utdata.
 
-<a id="celle-3"></a>
-
-### Celle 3 — markdown
+<a id="celle-6"></a>
+### Celle 6 — markdown
 
 Celle-ID: `8e9d4cc5`.
 
-````markdown
-# Kalenderbaserte features
-````
+```markdown
+#### Kalenderbaserte features
+```
 
-<a id="celle-4"></a>
+<a id="celle-7"></a>
+### Celle 7 — markdown
 
-### Celle 4 — code
+Celle-ID: `workflow-step-4`.
+
+```markdown
+### Steg 2: Kalenderbaserte prediktorer
+
+- **Hva:** Leser kommuneutvalget og lager sykliske kalenderverdier.
+- **Hvorfor:** For å representere døgn, uke og år.
+- **Utbytte:** Featuresett A.
+
+```
+
+<a id="celle-8"></a>
+### Celle 8 — code
 
 Celle-ID: `fab3a15f`.
 
-Lagret kjøringsnummer: `54`.
+```python
+from pathlib import Path
 
-````python
+ROOT = next(p for p in (Path.cwd(), *Path.cwd().parents)
+            if (p / "AGENTS.md").is_file() and (p / "data").is_dir())
+
 df = pd.read_csv(
-    "../data/consumption_selected.csv",
+    ROOT / "data/processed/consumption_selected.csv",
     sep=";",
     decimal=","
 )
@@ -1120,11 +1178,11 @@ calendar_features = [
 ]
 
 print(df[calendar_features].head())
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `54`.
 
-````text
+```text
    HOUR_SIN  HOUR_COS  MONTH_SIN  MONTH_COS   DAY_SIN  DAY_COS  IS_WEEKEND  \
 0       0.0       1.0        0.5   0.866025  0.781831  0.62349           0   
 1       0.0       1.0        0.5   0.866025  0.781831  0.62349           0   
@@ -1139,37 +1197,46 @@ print(df[calendar_features].head())
 3  Bergen     Forretning  
 4  Bergen       Industri  
 
-````
+```
 
-<a id="celle-5"></a>
-
-### Celle 5 — markdown
+<a id="celle-9"></a>
+### Celle 9 — markdown
 
 Celle-ID: `14a59c80`.
 
-````markdown
+```markdown
 Gjør dette slik at tallene blir mer som en klokke
-````
+```
 
-<a id="celle-6"></a>
-
-### Celle 6 — markdown
+<a id="celle-10"></a>
+### Celle 10 — markdown
 
 Celle-ID: `bb35dc4c`.
 
-````markdown
-# Historiske prediktorene
-````
+```markdown
+#### Historiske prediktorene
+```
 
-<a id="celle-7"></a>
+<a id="celle-11"></a>
+### Celle 11 — markdown
 
-### Celle 7 — code
+Celle-ID: `workflow-step-7`.
+
+```markdown
+### Steg 3: Historiske prediktorer
+
+- **Hva:** Kobler tidligere forbruk etter lokale kalenderdager.
+- **Hvorfor:** For å tilføre tilgjengelig historikk.
+- **Utbytte:** Lagverdier og tidligere døgnmiddel.
+
+```
+
+<a id="celle-12"></a>
+### Celle 12 — code
 
 Celle-ID: `37c87fc5`.
 
-Lagret kjøringsnummer: `55`.
-
-````python
+```python
 # Parse tidspunktene til norsk lokal tid
 df["TIMESTAMP"] = (
     pd.to_datetime(df["STARTTID"], utc=True)
@@ -1246,11 +1313,11 @@ print(
         "LAG_7D", "MEAN_3D"
     ]].tail(10)
 )
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `55`.
 
-````text
+```text
            KOMMUNE FORBRUKSGRUPPE   DATE_KEY  LOCAL_HOUR   VOLUM_KWH  \
 1115960    Sunndal         Privat 2026-04-30          23    5328.694   
 1115961     Tromsø     Forretning 2026-04-30          23   40554.563   
@@ -1275,15 +1342,14 @@ print(
 1115968  390451.211  393703.938  390088.771042  
 1115969    4886.839    4715.084    4856.012708  
 
-````
+```
 
-<a id="celle-8"></a>
-
-### Celle 8 — markdown
+<a id="celle-13"></a>
+### Celle 13 — markdown
 
 Celle-ID: `2634c90e`.
 
-````markdown
+```markdown
 MEAN_3D = Hvordan var hele dagen for 3 dager siden?
 LAG_3D = Hva var forbruket på samme time 3 dager siden?
 LAG_7D = Hva var forbruket på samme time 1 uke siden?
@@ -1291,27 +1357,37 @@ LAG_7D = Hva var forbruket på samme time 1 uke siden?
 For å gi modellen historikk slik at den lettere kan oppdage mønstre og lage bedre prognoser.
 
 Prognosen for måldag D lages kl. 00.00 norsk tid på D−1. LAG_3D og MEAN_3D bruker D−3; LAG_7D bruker D−7. Tilgjengelighetskontrollen forutsetter én times publiseringsforsinkelse. Faktisk publiseringstid er ikke bekreftet, så tilgjengeligheten av målingene er fortsatt en forutsetning.
-````
+```
 
-<a id="celle-9"></a>
-
-### Celle 9 — markdown
+<a id="celle-14"></a>
+### Celle 14 — markdown
 
 Celle-ID: `de3e8ada`.
 
-````markdown
-# Kontroll
-````
+```markdown
+#### Kontroll
+```
 
-<a id="celle-10"></a>
+<a id="celle-15"></a>
+### Celle 15 — markdown
 
-### Celle 10 — code
+Celle-ID: `workflow-step-10`.
+
+```markdown
+### Steg 4: Omfang og manglende historikk
+
+- **Hva:** Teller observasjoner og historikkmangler.
+- **Hvorfor:** For å kontrollere featuregrunnlaget.
+- **Utbytte:** Antall mangler per variabel.
+
+```
+
+<a id="celle-16"></a>
+### Celle 16 — code
 
 Celle-ID: `7c27bdda`.
 
-Lagret kjøringsnummer: `56`.
-
-````python
+```python
 lag_features = [
     "LAG_3D",
     "LAG_7D",
@@ -1334,11 +1410,11 @@ print(
         subset=["KOMMUNE", "FORBRUKSGRUPPE", "TIMESTAMP"]
     ).sum()
 )
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `56`.
 
-````text
+```text
 Antall observasjoner: 1115970
 
 Manglende historiske verdier:
@@ -1356,17 +1432,28 @@ dtype: float64
 Duplikater per kommune, gruppe og tidspunkt:
 0
 
-````
+```
 
-<a id="celle-11"></a>
+<a id="celle-17"></a>
+### Celle 17 — markdown
 
-### Celle 11 — code
+Celle-ID: `workflow-step-11`.
+
+```markdown
+### Steg 5: Undersøk historikkmangler
+
+- **Hva:** Lister rader uten komplett historikk.
+- **Hvorfor:** For å undersøke oppstart og tidsoverganger.
+- **Utbytte:** Konkrete kontrollrader.
+
+```
+
+<a id="celle-18"></a>
+### Celle 18 — code
 
 Celle-ID: `18fb5063`.
 
-Lagret kjøringsnummer: `57`.
-
-````python
+```python
 lag_features = [
     "LAG_3D",
     "LAG_7D",
@@ -1388,11 +1475,11 @@ print(
 
 print("\nAntall komplette observasjoner:")
 print(df.dropna(subset=lag_features).shape[0])
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `57`.
 
-````text
+```text
 Manglende observasjoner per år:
 YEAR
 2022    5100
@@ -1419,17 +1506,28 @@ dtype: int64
 Antall komplette observasjoner:
 1110630
 
-````
+```
 
-<a id="celle-12"></a>
+<a id="celle-19"></a>
+### Celle 19 — markdown
 
-### Celle 12 — code
+Celle-ID: `workflow-step-12`.
+
+```markdown
+### Steg 6: Mangler per dato
+
+- **Hva:** Fordeler historikkmangler på dato.
+- **Hvorfor:** For å lokalisere tidsmessige hull.
+- **Utbytte:** En datooversikt.
+
+```
+
+<a id="celle-20"></a>
+### Celle 20 — code
 
 Celle-ID: `da123ce3`.
 
-Lagret kjøringsnummer: `58`.
-
-````python
+```python
 missing_dates = (
     df.loc[df[lag_features].isna().any(axis=1)]
       .groupby("DATE_KEY")
@@ -1438,11 +1536,11 @@ missing_dates = (
 
 print(missing_dates.to_string())
 
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `58`.
 
-````text
+```text
 DATE_KEY
 2022-02-01    720
 2022-02-02    720
@@ -1462,37 +1560,46 @@ DATE_KEY
 2026-04-01     30
 2026-04-05     30
 
-````
+```
 
-<a id="celle-13"></a>
-
-### Celle 13 — markdown
+<a id="celle-21"></a>
+### Celle 21 — markdown
 
 Celle-ID: `687315ef`.
 
-````markdown
+```markdown
 Data som magler kommer av at vi ser tilbake i tid og sommertid
-````
+```
 
-<a id="celle-14"></a>
-
-### Celle 14 — markdown
+<a id="celle-22"></a>
+### Celle 22 — markdown
 
 Celle-ID: `03850675`.
 
-````markdown
-# Fjerner observasjoner med manglende historikk
-````
+```markdown
+#### Fjerner observasjoner med manglende historikk
+```
 
-<a id="celle-15"></a>
+<a id="celle-23"></a>
+### Celle 23 — markdown
 
-### Celle 15 — code
+Celle-ID: `workflow-step-15`.
+
+```markdown
+### Steg 7: Komplett modellgrunnlag
+
+- **Hva:** Fjerner rader uten historiske prediktorer.
+- **Hvorfor:** For å sammenligne A og B på like rader.
+- **Utbytte:** Df_model.
+
+```
+
+<a id="celle-24"></a>
+### Celle 24 — code
 
 Celle-ID: `06b2ca49`.
 
-Lagret kjøringsnummer: `59`.
-
-````python
+```python
 # Fjern observasjoner med manglende historiske prediktorer
 df_model = df.dropna(subset=lag_features).copy()
 
@@ -1503,11 +1610,11 @@ print("Fjernet:", len(df) - len(df_model))
 
 print("\nManglende historiske verdier:")
 print(df_model[lag_features].isna().sum())
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `59`.
 
-````text
+```text
 Før: 1115970
 Etter: 1110630
 Fjernet: 5340
@@ -1518,27 +1625,47 @@ LAG_7D     0
 MEAN_3D    0
 dtype: int64
 
-````
+```
 
-<a id="celle-16"></a>
-
-### Celle 16 — markdown
+<a id="celle-25"></a>
+### Celle 25 — markdown
 
 Celle-ID: `f5c09cc2`.
 
-````markdown
-# Train / Validation / Test Split
-````
+```markdown
+#### Train / Validation / Test Split
+```
 
-<a id="celle-17"></a>
+<a id="celle-26"></a>
+### Celle 26 — markdown
 
-### Celle 17 — code
+Celle-ID: `workflow-phase-17`.
+
+```markdown
+## 2. Dataklargjøring og kronologisk oppdeling
+
+```
+
+<a id="celle-27"></a>
+### Celle 27 — markdown
+
+Celle-ID: `workflow-step-17`.
+
+```markdown
+### Steg 8: Kronologisk oppdeling
+
+- **Hva:** Skiller trening, validering og test etter år.
+- **Hvorfor:** For å evaluere på senere observasjoner.
+- **Utbytte:** Trening 2022–2024, validering 2025 og test 2026.
+
+```
+
+<a id="celle-28"></a>
+### Celle 28 — code
 
 Celle-ID: `eb3fe15b`.
 
-Lagret kjøringsnummer: `60`.
-
-````python
+```python
 # Train: 2022–2024
 train = df_model[df_model["YEAR"] <= 2024].copy()
 
@@ -1561,28 +1688,39 @@ for name, subset in [
     )
 
 print("\nTotalt:", len(train) + len(validation) + len(test))
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `60`.
 
-````text
+```text
 Train: 761,580 observasjoner | 2022-02-08 til 2024-12-31
 Validation: 262,740 observasjoner | 2025-01-01 til 2025-12-31
 Test: 86,310 observasjoner | 2026-01-01 til 2026-04-30
 
 Totalt: 1110630
 
-````
+```
 
-<a id="celle-18"></a>
+<a id="celle-29"></a>
+### Celle 29 — markdown
 
-### Celle 18 — code
+Celle-ID: `workflow-step-18`.
+
+```markdown
+### Steg 9: Definer A og B
+
+- **Hva:** Angir inputvariabler og mål.
+- **Hvorfor:** For å isolere bidraget fra historikk.
+- **Utbytte:** To eksplisitte featuresett.
+
+```
+
+<a id="celle-30"></a>
+### Celle 30 — code
 
 Celle-ID: `ab58c35e`.
 
-Lagret kjøringsnummer: `61`.
-
-````python
+```python
 # Modell A: Kun kalenderbaserte prediktorer
 features_A = calendar_features.copy()
 
@@ -1593,38 +1731,48 @@ target = "VOLUM_KWH"
 
 print("Modell A:", features_A)
 print("\nModell B:", features_B)
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `61`.
 
-````text
+```text
 Modell A: ['HOUR_SIN', 'HOUR_COS', 'MONTH_SIN', 'MONTH_COS', 'DAY_SIN', 'DAY_COS', 'IS_WEEKEND', 'KOMMUNE', 'FORBRUKSGRUPPE']
 
 Modell B: ['HOUR_SIN', 'HOUR_COS', 'MONTH_SIN', 'MONTH_COS', 'DAY_SIN', 'DAY_COS', 'IS_WEEKEND', 'KOMMUNE', 'FORBRUKSGRUPPE', 'LAG_3D', 'LAG_7D', 'MEAN_3D']
 
-````
+```
 
-<a id="celle-19"></a>
-
-### Celle 19 — markdown
+<a id="celle-31"></a>
+### Celle 31 — markdown
 
 Celle-ID: `e821ae55`.
 
-````markdown
+```markdown
 A bruker kalender, kommune og forbruksgruppe.
 
 B bruker det samme, pluss de tre historiske variablene.
-````
+```
 
-<a id="celle-20"></a>
+<a id="celle-32"></a>
+### Celle 32 — markdown
 
-### Celle 20 — code
+Celle-ID: `workflow-step-20`.
+
+```markdown
+### Steg 10: Klargjør X og y
+
+- **Hva:** Lager inputtabeller og målverdier.
+- **Hvorfor:** For å gi modellene identiske datasplitter.
+- **Utbytte:** Trenings-, validerings- og testmatriser.
+
+```
+
+<a id="celle-33"></a>
+### Celle 33 — code
 
 Celle-ID: `69327e7b`.
 
-Lagret kjøringsnummer: `62`.
-
-````python
+```python
 # Modell A
 X_train_A = train[features_A].copy()
 X_val_A = validation[features_A].copy()
@@ -1643,36 +1791,46 @@ y_test = test[target].copy()
 print("Modell A:", X_train_A.shape)
 print("Modell B:", X_train_B.shape)
 print("Target:", y_train.shape)
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `62`.
 
-````text
+```text
 Modell A: (761580, 9)
 Modell B: (761580, 12)
 Target: (761580,)
 
-````
+```
 
-<a id="celle-21"></a>
-
-### Celle 21 — markdown
+<a id="celle-34"></a>
+### Celle 34 — markdown
 
 Celle-ID: `5c41ce6e`.
 
-````markdown
+```markdown
 Preprocessing
-````
+```
 
-<a id="celle-22"></a>
+<a id="celle-35"></a>
+### Celle 35 — markdown
 
-### Celle 22 — code
+Celle-ID: `workflow-step-22`.
+
+```markdown
+### Steg 11: Preprosessering
+
+- **Hva:** Definerer skalering og kategorikoding.
+- **Hvorfor:** For å klargjøre input uten å lære av testdata.
+- **Utbytte:** Transformasjoner som tilpasses i treningspipeline.
+
+```
+
+<a id="celle-36"></a>
+### Celle 36 — code
 
 Celle-ID: `270a9347`.
 
-Lagret kjøringsnummer: `63`.
-
-````python
+```python
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
@@ -1714,47 +1872,78 @@ preprocessor_B = ColumnTransformer(
 print("Numeriske variabler A:", numerical_A)
 print("Numeriske variabler B:", numerical_B)
 print("\nPreprocessing opprettet.")
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `63`.
 
-````text
+```text
 Numeriske variabler A: ['HOUR_SIN', 'HOUR_COS', 'MONTH_SIN', 'MONTH_COS', 'DAY_SIN', 'DAY_COS', 'IS_WEEKEND']
 Numeriske variabler B: ['HOUR_SIN', 'HOUR_COS', 'MONTH_SIN', 'MONTH_COS', 'DAY_SIN', 'DAY_COS', 'IS_WEEKEND', 'LAG_3D', 'LAG_7D', 'MEAN_3D']
 
 Preprocessing opprettet.
 
-````
+```
 
-<a id="celle-23"></a>
+<a id="celle-37"></a>
+### Celle 37 — markdown
 
-### Celle 23 — markdown
+Celle-ID: `workflow-summary-22`.
+
+```markdown
+**Kort oppsummering**
+
+- A og B bruker samme kronologiske rader. Transformasjoner læres i treningspipeline. Testdata brukes først etter modellvalget.
+
+```
+
+<a id="celle-38"></a>
+### Celle 38 — markdown
 
 Celle-ID: `8757382e`.
 
-````markdown
+```markdown
 Gjør kategorier om til tall og skalerer de
-````
+```
 
-<a id="celle-24"></a>
-
-### Celle 24 — markdown
+<a id="celle-39"></a>
+### Celle 39 — markdown
 
 Celle-ID: `94b2df1e`.
 
-````markdown
-# Baseline A
-````
+```markdown
+#### Baseline A
+```
 
-<a id="celle-25"></a>
+<a id="celle-40"></a>
+### Celle 40 — markdown
 
-### Celle 25 — code
+Celle-ID: `workflow-phase-25`.
+
+```markdown
+## 3. Baselines og modellutvikling
+
+```
+
+<a id="celle-41"></a>
+### Celle 41 — markdown
+
+Celle-ID: `workflow-step-25`.
+
+```markdown
+### Steg 12: Kalenderbaseline A
+
+- **Hva:** Beregner kalendergjennomsnitt fra trening.
+- **Hvorfor:** For å etablere et enkelt referansenivå.
+- **Utbytte:** Valideringsfeil for baseline A.
+
+```
+
+<a id="celle-42"></a>
+### Celle 42 — code
 
 Celle-ID: `6c19b648`.
 
-Lagret kjøringsnummer: `64`.
-
-````python
+```python
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 
 # Gjennomsnitt fra treningsdataene
@@ -1790,36 +1979,46 @@ rmse_A = np.sqrt(mean_squared_error(y_val, y_pred_A))
 
 print(f"Baseline A - MAE: {mae_A:,.2f} kWh")
 print(f"Baseline A - RMSE: {rmse_A:,.2f} kWh")
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `64`.
 
-````text
+```text
 Manglende prediksjoner: 0
 Baseline A - MAE: 20,365.37 kWh
 Baseline A - RMSE: 40,934.92 kWh
 
-````
+```
 
-<a id="celle-26"></a>
-
-### Celle 26 — markdown
+<a id="celle-43"></a>
+### Celle 43 — markdown
 
 Celle-ID: `03c2cfeb`.
 
-````markdown
+```markdown
 Baseline B
-````
+```
 
-<a id="celle-27"></a>
+<a id="celle-44"></a>
+### Celle 44 — markdown
 
-### Celle 27 — code
+Celle-ID: `workflow-step-27`.
+
+```markdown
+### Steg 13: Historisk baseline B
+
+- **Hva:** Bruker samme time forrige uke.
+- **Hvorfor:** For å måle nytten utover sesongnaiv prognose.
+- **Utbytte:** Valideringsfeil for LAG_7D.
+
+```
+
+<a id="celle-45"></a>
+### Celle 45 — code
 
 Celle-ID: `41df3fa1`.
 
-Lagret kjøringsnummer: `65`.
-
-````python
+```python
 # Prediksjon = forbruk samme time uken før
 y_pred_B = validation["LAG_7D"]
 
@@ -1828,35 +2027,45 @@ rmse_B = np.sqrt(mean_squared_error(y_val, y_pred_B))
 
 print(f"Baseline B - MAE: {mae_B:,.2f} kWh")
 print(f"Baseline B - RMSE: {rmse_B:,.2f} kWh")
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `65`.
 
-````text
+```text
 Baseline B - MAE: 9,247.76 kWh
 Baseline B - RMSE: 21,594.20 kWh
 
-````
+```
 
-<a id="celle-28"></a>
-
-### Celle 28 — markdown
+<a id="celle-46"></a>
+### Celle 46 — markdown
 
 Celle-ID: `66daea4f`.
 
-````markdown
+```markdown
 Opprette modell
-````
+```
 
-<a id="celle-29"></a>
+<a id="celle-47"></a>
+### Celle 47 — markdown
 
-### Celle 29 — code
+Celle-ID: `workflow-step-29`.
+
+```markdown
+### Steg 14: Lineær regresjon A og B
+
+- **Hva:** Oppretter to regresjonspipelines.
+- **Hvorfor:** For å sammenligne kalender med historikk.
+- **Utbytte:** Utrente A/B-modeller.
+
+```
+
+<a id="celle-48"></a>
+### Celle 48 — code
 
 Celle-ID: `6089ab89`.
 
-Lagret kjøringsnummer: `66`.
-
-````python
+```python
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LinearRegression
 
@@ -1873,34 +2082,44 @@ model_B = Pipeline([
 ])
 
 print("Begge regresjonsmodellene er opprettet.")
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `66`.
 
-````text
+```text
 Begge regresjonsmodellene er opprettet.
 
-````
+```
 
-<a id="celle-30"></a>
-
-### Celle 30 — markdown
+<a id="celle-49"></a>
+### Celle 49 — markdown
 
 Celle-ID: `8c7872c4`.
 
-````markdown
+```markdown
 Trainig
-````
+```
 
-<a id="celle-31"></a>
+<a id="celle-50"></a>
+### Celle 50 — markdown
 
-### Celle 31 — code
+Celle-ID: `workflow-step-31`.
+
+```markdown
+### Steg 15: Tren lineære modeller
+
+- **Hva:** Tilpasser begge modeller på treningsperioden.
+- **Hvorfor:** For å lære sammenhenger uten valideringsdata.
+- **Utbytte:** Trente A/B-modeller.
+
+```
+
+<a id="celle-51"></a>
+### Celle 51 — code
 
 Celle-ID: `0717c67c`.
 
-Lagret kjøringsnummer: `67`.
-
-````python
+```python
 # Tren Modell A
 model_A.fit(X_train_A, y_train)
 
@@ -1908,34 +2127,44 @@ model_A.fit(X_train_A, y_train)
 model_B.fit(X_train_B, y_train)
 
 print("Begge modellene er ferdig trent.")
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `67`.
 
-````text
+```text
 Begge modellene er ferdig trent.
 
-````
+```
 
-<a id="celle-32"></a>
-
-### Celle 32 — markdown
+<a id="celle-52"></a>
+### Celle 52 — markdown
 
 Celle-ID: `140932f1`.
 
-````markdown
+```markdown
 Evaluering på valideringsdata
-````
+```
 
-<a id="celle-33"></a>
+<a id="celle-53"></a>
+### Celle 53 — markdown
 
-### Celle 33 — code
+Celle-ID: `workflow-step-33`.
+
+```markdown
+### Steg 16: Valider lineære modeller
+
+- **Hva:** Beregner MAE, RMSE og R² på 2025.
+- **Hvorfor:** For å sammenligne generalisering.
+- **Utbytte:** Valideringsresultater.
+
+```
+
+<a id="celle-54"></a>
+### Celle 54 — code
 
 Celle-ID: `a3aae2fe`.
 
-Lagret kjøringsnummer: `68`.
-
-````python
+```python
 from sklearn.metrics import (
     mean_absolute_error,
     mean_squared_error,
@@ -1966,36 +2195,46 @@ results = pd.DataFrame({
 })
 
 print(results.round(3).to_string(index=False))
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `68`.
 
-````text
+```text
               Model       MAE       RMSE    R2
 Linear Regression A 89739.109 133348.111 0.339
 Linear Regression B  8934.311  18831.553 0.987
 
-````
+```
 
-<a id="celle-34"></a>
-
-### Celle 34 — markdown
+<a id="celle-55"></a>
+### Celle 55 — markdown
 
 Celle-ID: `bf4494df`.
 
-````markdown
+```markdown
 Undersøkelse av den store diffen
-````
+```
 
-<a id="celle-35"></a>
+<a id="celle-56"></a>
+### Celle 56 — markdown
 
-### Celle 35 — code
+Celle-ID: `workflow-step-35`.
+
+```markdown
+### Steg 17: Lineær modell mot ukesbaseline
+
+- **Hva:** Sammenligner regresjon B og historisk baseline.
+- **Hvorfor:** For å tolke modellens merverdi.
+- **Utbytte:** En direkte feilsammenligning.
+
+```
+
+<a id="celle-57"></a>
+### Celle 57 — code
 
 Celle-ID: `9fad3304`.
 
-Lagret kjøringsnummer: `69`.
-
-````python
+```python
 # Sammenlign lineær regresjon B med historisk baseline
 
 comparison = pd.DataFrame({
@@ -2019,36 +2258,46 @@ comparison = pd.DataFrame({
 
 print(comparison.round(3).to_string(index=False))
 
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `69`.
 
-````text
+```text
               Model      MAE      RMSE    R2
 Baseline B (LAG_7D) 9247.763 21594.196 0.983
 Linear Regression B 8934.311 18831.553 0.987
 
-````
+```
 
-<a id="celle-36"></a>
-
-### Celle 36 — markdown
+<a id="celle-58"></a>
+### Celle 58 — markdown
 
 Celle-ID: `b4f8e739`.
 
-````markdown
+```markdown
 Evaluering av modellene per forbruksgruppe
-````
+```
 
-<a id="celle-37"></a>
+<a id="celle-59"></a>
+### Celle 59 — markdown
 
-### Celle 37 — code
+Celle-ID: `workflow-step-37`.
+
+```markdown
+### Steg 18: Lineær feil per gruppe
+
+- **Hva:** Fordeler valideringsfeil på forbruksgrupper.
+- **Hvorfor:** For å undersøke variasjon bak totalsnittet.
+- **Utbytte:** Gruppevise feilmål.
+
+```
+
+<a id="celle-60"></a>
+### Celle 60 — code
 
 Celle-ID: `3329b9fd`.
 
-Lagret kjøringsnummer: `70`.
-
-````python
+```python
 # Lag evalueringsdatasett
 evaluation = validation[
     ["KOMMUNE", "FORBRUKSGRUPPE", "VOLUM_KWH", "LAG_7D"]
@@ -2085,11 +2334,11 @@ print(
     .to_string(index=False)
 )
 
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `70`.
 
-````text
+```text
      Group               Model        MAE       RMSE    R2
 Forretning          Baseline B   6434.238  14639.308 0.984
 Forretning Linear Regression B   7669.841  15751.917 0.982
@@ -2101,27 +2350,37 @@ Forretning Linear Regression A  61145.853  89179.150 0.420
     Privat          Baseline B  13469.550  27364.007 0.962
     Privat Linear Regression A  76185.113 112418.855 0.362
 
-````
+```
 
-<a id="celle-38"></a>
-
-### Celle 38 — markdown
+<a id="celle-61"></a>
+### Celle 61 — markdown
 
 Celle-ID: `08120ed1`.
 
-````markdown
+```markdown
 Ridge Regression
-````
+```
 
-<a id="celle-39"></a>
+<a id="celle-62"></a>
+### Celle 62 — markdown
 
-### Celle 39 — code
+Celle-ID: `workflow-step-39`.
+
+```markdown
+### Steg 19: Ridge-regresjon
+
+- **Hva:** Trener og validerer regularisert regresjon.
+- **Hvorfor:** For å undersøke alternativ lineær tilpasning.
+- **Utbytte:** Valideringsfeil for Ridge B.
+
+```
+
+<a id="celle-63"></a>
+### Celle 63 — code
 
 Celle-ID: `0b081e36`.
 
-Lagret kjøringsnummer: `71`.
-
-````python
+```python
 from sklearn.linear_model import Ridge
 from sklearn.pipeline import Pipeline
 
@@ -2151,37 +2410,47 @@ print(
     "R2:",
     round(r2_score(y_val, pred_ridge_B), 3)
 )
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `71`.
 
-````text
+```text
 Ridge B
 MAE: 8934.362
 RMSE: 18831.533
 R2: 0.987
 
-````
+```
 
-<a id="celle-40"></a>
-
-### Celle 40 — markdown
+<a id="celle-64"></a>
+### Celle 64 — markdown
 
 Celle-ID: `725fdc72`.
 
-````markdown
+```markdown
 Random Forest
-````
+```
 
-<a id="celle-41"></a>
+<a id="celle-65"></a>
+### Celle 65 — markdown
 
-### Celle 41 — code
+Celle-ID: `workflow-step-41`.
+
+```markdown
+### Steg 20: Random Forest B
+
+- **Hva:** Oppretter skogmodell med historikk.
+- **Hvorfor:** For å modellere ikke-lineære sammenhenger.
+- **Utbytte:** En treningsklar pipeline.
+
+```
+
+<a id="celle-66"></a>
+### Celle 66 — code
 
 Celle-ID: `395c2801`.
 
-Lagret kjøringsnummer: `72`.
-
-````python
+```python
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder
@@ -2208,34 +2477,44 @@ rf_B = Pipeline([
 ])
 
 print("Random Forest B opprettet.")
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `72`.
 
-````text
+```text
 Random Forest B opprettet.
 
-````
+```
 
-<a id="celle-42"></a>
-
-### Celle 42 — markdown
+<a id="celle-67"></a>
+### Celle 67 — markdown
 
 Celle-ID: `c6ab22c6`.
 
-````markdown
+```markdown
 Trening og evaluring
-````
+```
 
-<a id="celle-43"></a>
+<a id="celle-68"></a>
+### Celle 68 — markdown
 
-### Celle 43 — code
+Celle-ID: `workflow-step-43`.
+
+```markdown
+### Steg 21: Tren og valider Random Forest B
+
+- **Hva:** Tilpasser skogen og predikerer 2025.
+- **Hvorfor:** For å sammenligne med enklere modeller.
+- **Utbytte:** Valideringsprediksjoner og feilmål.
+
+```
+
+<a id="celle-69"></a>
+### Celle 69 — code
 
 Celle-ID: `a8033947`.
 
-Lagret kjøringsnummer: `73`.
-
-````python
+```python
 # Tren modellen på 2022–2024
 rf_B.fit(X_train_B, y_train)
 
@@ -2247,37 +2526,47 @@ print("Random Forest B")
 print("MAE:", round(mean_absolute_error(y_val, pred_rf_B), 3))
 print("RMSE:", round(np.sqrt(mean_squared_error(y_val, pred_rf_B)), 3))
 print("R2:", round(r2_score(y_val, pred_rf_B), 3))
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `73`.
 
-````text
+```text
 Random Forest B
 MAE: 7257.751
 RMSE: 16564.082
 R2: 0.99
 
-````
+```
 
-<a id="celle-44"></a>
-
-### Celle 44 — markdown
+<a id="celle-70"></a>
+### Celle 70 — markdown
 
 Celle-ID: `3e643cbf`.
 
-````markdown
+```markdown
 Evaluer Random Forest per forbruksgruppe
-````
+```
 
-<a id="celle-45"></a>
+<a id="celle-71"></a>
+### Celle 71 — markdown
 
-### Celle 45 — code
+Celle-ID: `workflow-step-45`.
+
+```markdown
+### Steg 22: Random Forest per gruppe
+
+- **Hva:** Sammenligner feil innen forbruksgruppene.
+- **Hvorfor:** For å se hvilke grupper modellen hjelper.
+- **Utbytte:** Gruppevise valideringsresultater.
+
+```
+
+<a id="celle-72"></a>
+### Celle 72 — code
 
 Celle-ID: `b543940b`.
 
-Lagret kjøringsnummer: `74`.
-
-````python
+```python
 # Legg til Random Forest-prediksjonene
 evaluation["PRED_RF_B"] = pred_rf_B
 
@@ -2308,11 +2597,11 @@ print(
     .round(3)
     .to_string(index=False)
 )
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `74`.
 
-````text
+```text
      Group               Model       MAE      RMSE    R2
 Forretning     Random Forest B  5134.079 11464.559 0.990
 Forretning          Baseline B  6434.238 14639.308 0.984
@@ -2324,27 +2613,37 @@ Forretning Linear Regression B  7669.841 15751.917 0.982
     Privat Linear Regression B 11659.006 22468.085 0.975
     Privat          Baseline B 13469.550 27364.007 0.962
 
-````
+```
 
-<a id="celle-46"></a>
-
-### Celle 46 — markdown
+<a id="celle-73"></a>
+### Celle 73 — markdown
 
 Celle-ID: `bb5f8e33`.
 
-````markdown
+```markdown
 Random Forest A
-````
+```
 
-<a id="celle-47"></a>
+<a id="celle-74"></a>
+### Celle 74 — markdown
 
-### Celle 47 — code
+Celle-ID: `workflow-step-47`.
+
+```markdown
+### Steg 23: Random Forest A
+
+- **Hva:** Trener skogmodell uten forbrukshistorikk.
+- **Hvorfor:** For å undersøke kalendergrunnlaget alene.
+- **Utbytte:** En trent A-modell.
+
+```
+
+<a id="celle-75"></a>
+### Celle 75 — code
 
 Celle-ID: `b9fca73b`.
 
-Lagret kjøringsnummer: `75`.
-
-````python
+```python
 # Preprocessing for Random Forest A
 rf_preprocessor_A = ColumnTransformer([
     ("num", "passthrough", numerical_A),
@@ -2370,34 +2669,44 @@ rf_A.fit(X_train_A, y_train)
 
 print("Random Forest A ferdig trent.")
 
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `75`.
 
-````text
+```text
 Random Forest A ferdig trent.
 
-````
+```
 
-<a id="celle-48"></a>
-
-### Celle 48 — markdown
+<a id="celle-76"></a>
+### Celle 76 — markdown
 
 Celle-ID: `9bf8b90e`.
 
-````markdown
+```markdown
 Evaluering og validering A
-````
+```
 
-<a id="celle-49"></a>
+<a id="celle-77"></a>
+### Celle 77 — markdown
 
-### Celle 49 — code
+Celle-ID: `workflow-step-49`.
+
+```markdown
+### Steg 24: Sammenlign Random Forest A og B
+
+- **Hva:** Samler valideringsfeil for lineære modeller og skog.
+- **Hvorfor:** For å sammenligne modell og informasjonssett.
+- **Utbytte:** En valideringstabell.
+
+```
+
+<a id="celle-78"></a>
+### Celle 78 — code
 
 Celle-ID: `d9d4066d`.
 
-Lagret kjøringsnummer: `76`.
-
-````python
+```python
 # Prediksjon på valideringsdataene
 pred_rf_A = rf_A.predict(X_val_A)
 
@@ -2430,38 +2739,48 @@ comparison_rf = pd.DataFrame({
 
 print(comparison_rf.round(3).to_string(index=False))
 
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `76`.
 
-````text
+```text
               Model       MAE       RMSE    R2
 Linear Regression A 89739.109 133348.111 0.339
     Random Forest A  9384.811  18852.797 0.987
 Linear Regression B  8934.311  18831.553 0.987
     Random Forest B  7257.751  16564.082 0.990
 
-````
+```
 
-<a id="celle-50"></a>
-
-### Celle 50 — markdown
+<a id="celle-79"></a>
+### Celle 79 — markdown
 
 Celle-ID: `23675dad`.
 
-````markdown
+```markdown
 Evaluering av Random Forest A og B per kommune
-````
+```
 
-<a id="celle-51"></a>
+<a id="celle-80"></a>
+### Celle 80 — markdown
 
-### Celle 51 — code
+Celle-ID: `workflow-step-51`.
+
+```markdown
+### Steg 25: Random Forest per kommune
+
+- **Hva:** Sammenligner A/B-feil kommunevis.
+- **Hvorfor:** For å undersøke geografiske forskjeller.
+- **Utbytte:** Kommunale valideringsfeil.
+
+```
+
+<a id="celle-81"></a>
+### Celle 81 — code
 
 Celle-ID: `958b592b`.
 
-Lagret kjøringsnummer: `77`.
-
-````python
+```python
 # Opprett evalueringsdata
 municipality_eval = validation[
     ["KOMMUNE", "FORBRUKSGRUPPE", "VOLUM_KWH"]
@@ -2500,11 +2819,11 @@ print(
     .to_string(index=False)
 )
 
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `77`.
 
-````text
+```text
      Kommune    MAE_A    MAE_B  Improvement_%
        Årdal  3189.72  1256.15          60.62
      Sunndal  5009.20  2174.22          56.60
@@ -2517,27 +2836,37 @@ Kristiansand  6896.02  4377.49          36.52
         Oslo 34367.68 28936.09          15.80
         Bodø  3333.13  2874.57          13.76
 
-````
+```
 
-<a id="celle-52"></a>
-
-### Celle 52 — markdown
+<a id="celle-82"></a>
+### Celle 82 — markdown
 
 Celle-ID: `80eb1ea3`.
 
-````markdown
+```markdown
 Gradient Boosting B
-````
+```
 
-<a id="celle-53"></a>
+<a id="celle-83"></a>
+### Celle 83 — markdown
 
-### Celle 53 — code
+Celle-ID: `workflow-step-53`.
+
+```markdown
+### Steg 26: Gradient Boosting B
+
+- **Hva:** Oppretter boostingmodell med historikk.
+- **Hvorfor:** For å prøve en fleksibel modellfamilie.
+- **Utbytte:** En treningsklar pipeline.
+
+```
+
+<a id="celle-84"></a>
+### Celle 84 — code
 
 Celle-ID: `b0de4843`.
 
-Lagret kjøringsnummer: `78`.
-
-````python
+```python
 from sklearn.ensemble import HistGradientBoostingRegressor
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
@@ -2563,34 +2892,44 @@ gb_B = Pipeline([
 ])
 
 print("Gradient Boosting B opprettet.")
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `78`.
 
-````text
+```text
 Gradient Boosting B opprettet.
 
-````
+```
 
-<a id="celle-54"></a>
-
-### Celle 54 — markdown
+<a id="celle-85"></a>
+### Celle 85 — markdown
 
 Celle-ID: `c3df0be8`.
 
-````markdown
+```markdown
 Trening og evaluering
-````
+```
 
-<a id="celle-55"></a>
+<a id="celle-86"></a>
+### Celle 86 — markdown
 
-### Celle 55 — code
+Celle-ID: `workflow-step-55`.
+
+```markdown
+### Steg 27: Tren og valider Gradient Boosting
+
+- **Hva:** Tilpasser boosting og predikerer 2025.
+- **Hvorfor:** For å sammenligne modellfamilier.
+- **Utbytte:** Valideringsfeil.
+
+```
+
+<a id="celle-87"></a>
+### Celle 87 — code
 
 Celle-ID: `00c9ea94`.
 
-Lagret kjøringsnummer: `79`.
-
-````python
+```python
 # Tren på 2022–2024
 gb_B.fit(X_train_B, y_train)
 
@@ -2615,37 +2954,47 @@ print(
     round(r2_score(y_val, pred_gb_B), 3)
 )
 
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `79`.
 
-````text
+```text
 Gradient Boosting B
 MAE: 7369.746
 RMSE: 16121.807
 R2: 0.99
 
-````
+```
 
-<a id="celle-56"></a>
-
-### Celle 56 — markdown
+<a id="celle-88"></a>
+### Celle 88 — markdown
 
 Celle-ID: `0ef4540d`.
 
-````markdown
+```markdown
 Kontroll av oppsett på prognose
-````
+```
 
-<a id="celle-57"></a>
+<a id="celle-89"></a>
+### Celle 89 — markdown
 
-### Celle 57 — code
+Celle-ID: `workflow-step-57`.
+
+```markdown
+### Steg 28: Kontroller en prognoserad
+
+- **Hva:** Viser én observasjon og historiske input.
+- **Hvorfor:** For å gjøre prognoseoppsettet konkret.
+- **Utbytte:** En etterprøvbar stikkprøve.
+
+```
+
+<a id="celle-90"></a>
+### Celle 90 — code
 
 Celle-ID: `a9ae8785`.
 
-Lagret kjøringsnummer: `80`.
-
-````python
+```python
 # Velg en observasjon fra valideringsperioden
 sample = validation.sample(1, random_state=42).iloc[0]
 
@@ -2674,11 +3023,11 @@ print(
     historical[["DATE_KEY", "LOCAL_HOUR", "VOLUM_KWH"]]
     .to_string(index=False)
 )
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `80`.
 
-````text
+```text
 Kommune: Årdal
 Forbruksgruppe: Industri
 Dato: 2025-11-17 00:00:00
@@ -2693,27 +3042,37 @@ Faktisk historisk observasjon:
   DATE_KEY  LOCAL_HOUR  VOLUM_KWH
 2025-11-14          18 388916.623
 
-````
+```
 
-<a id="celle-58"></a>
-
-### Celle 58 — markdown
+<a id="celle-91"></a>
+### Celle 91 — markdown
 
 Celle-ID: `a62b9454`.
 
-````markdown
+```markdown
 Visualisering av faktiske og predikerte verdier
-````
+```
 
-<a id="celle-59"></a>
+<a id="celle-92"></a>
+### Celle 92 — markdown
 
-### Celle 59 — code
+Celle-ID: `workflow-step-59`.
+
+```markdown
+### Steg 29: Random Forest: tidsserie
+
+- **Hva:** Plotter faktiske og predikerte valideringsverdier.
+- **Hvorfor:** For å undersøke tidsforløpet.
+- **Utbytte:** En fast uke for Oslo Privat.
+
+```
+
+<a id="celle-93"></a>
+### Celle 93 — code
 
 Celle-ID: `f2b6bf74`.
 
-Lagret kjøringsnummer: `81`.
-
-````python
+```python
 import matplotlib.pyplot as plt
 
 # Bruk valideringsdataene og Random Forest-prediksjonene
@@ -2755,35 +3114,45 @@ plt.xticks(rotation=45)
 plt.tight_layout()
 plt.show()
 
-````
+```
 
-**Utdata 1 — `display_data`**
+Lagret kjøringsnummer: `81`.
 
-````text
+![Celle 93, resultat 1](figures/celle_93_utdata_01.png)
+
+```text
 <Figure size 1400x500 with 1 Axes>
-````
+```
 
-![Lagret figur fra celle 59, utdata 1](03_Feature_engineering_dokumentasjon_figurer/celle_59_utdata_01.png)
-
-<a id="celle-60"></a>
-
-### Celle 60 — markdown
+<a id="celle-94"></a>
+### Celle 94 — markdown
 
 Celle-ID: `3a66b0c2`.
 
-````markdown
+```markdown
 Beregning av residualene
-````
+```
 
-<a id="celle-61"></a>
+<a id="celle-95"></a>
+### Celle 95 — markdown
 
-### Celle 61 — code
+Celle-ID: `workflow-step-61`.
+
+```markdown
+### Steg 30: Random Forest: residualer
+
+- **Hva:** Beregner faktisk minus predikert forbruk.
+- **Hvorfor:** For å undersøke feilretning.
+- **Utbytte:** Residualer på validering.
+
+```
+
+<a id="celle-96"></a>
+### Celle 96 — code
 
 Celle-ID: `8c5056e5`.
 
-Lagret kjøringsnummer: `82`.
-
-````python
+```python
 
 # Lag datasett for residualanalyse
 residual_df = validation.copy()
@@ -2798,11 +3167,11 @@ residual_df["RESIDUAL"] = (
 
 print(residual_df["RESIDUAL"].describe())
 
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `82`.
 
-````text
+```text
 count    262740.000000
 mean       -181.443548
 std       16563.119610
@@ -2813,27 +3182,37 @@ min     -486087.623353
 max      335423.547447
 Name: RESIDUAL, dtype: float64
 
-````
+```
 
-<a id="celle-62"></a>
-
-### Celle 62 — markdown
+<a id="celle-97"></a>
+### Celle 97 — markdown
 
 Celle-ID: `15ec978a`.
 
-````markdown
+```markdown
 Visualisering av residualene
-````
+```
 
-<a id="celle-63"></a>
+<a id="celle-98"></a>
+### Celle 98 — markdown
 
-### Celle 63 — code
+Celle-ID: `workflow-step-63`.
+
+```markdown
+### Steg 31: Random Forest: residualfigurer
+
+- **Hva:** Plotter residualer og deres fordeling.
+- **Hvorfor:** For å avdekke systematikk og store avvik.
+- **Utbytte:** To diagnostiske figurer.
+
+```
+
+<a id="celle-99"></a>
+### Celle 99 — code
 
 Celle-ID: `bf8fd019`.
 
-Lagret kjøringsnummer: `83`.
-
-````python
+```python
 import matplotlib.pyplot as plt
 
 # Tilfeldig utvalg for plotting
@@ -2878,43 +3257,61 @@ plt.grid(alpha=0.3)
 plt.tight_layout()
 plt.show()
 
-````
+```
 
-**Utdata 1 — `display_data`**
+Lagret kjøringsnummer: `83`.
 
-````text
+![Celle 99, resultat 1](figures/celle_99_utdata_01.png)
+
+```text
 <Figure size 1000x500 with 1 Axes>
-````
+```
 
-![Lagret figur fra celle 63, utdata 1](03_Feature_engineering_dokumentasjon_figurer/celle_63_utdata_01.png)
+![Celle 99, resultat 2](figures/celle_99_utdata_02.png)
 
-**Utdata 2 — `display_data`**
-
-````text
+```text
 <Figure size 1000x500 with 1 Axes>
-````
+```
 
-![Lagret figur fra celle 63, utdata 2](03_Feature_engineering_dokumentasjon_figurer/celle_63_utdata_02.png)
-
-<a id="celle-64"></a>
-
-### Celle 64 — markdown
+<a id="celle-100"></a>
+### Celle 100 — markdown
 
 Celle-ID: `7f8b07a7`.
 
-````markdown
+```markdown
 Kontrollering av historiske prediktorer
-````
+```
 
-<a id="celle-65"></a>
+<a id="celle-101"></a>
+### Celle 101 — markdown
 
-### Celle 65 — code
+Celle-ID: `workflow-phase-65`.
+
+```markdown
+## 4. Kontroll av historiske input
+
+```
+
+<a id="celle-102"></a>
+### Celle 102 — markdown
+
+Celle-ID: `workflow-step-65`.
+
+```markdown
+### Steg 32: Kontroller lagverdier
+
+- **Hva:** Sjekker et fast tilfeldig utvalg mot kildedata.
+- **Hvorfor:** For å validere historikkoblingen.
+- **Utbytte:** Antall koblingsavvik.
+
+```
+
+<a id="celle-103"></a>
+### Celle 103 — code
 
 Celle-ID: `865ba44b`.
 
-Lagret kjøringsnummer: `84`.
-
-````python
+```python
 # Kontroller de historiske prediktorene for 1000 tilfeldige rader
 sample_check = validation.sample(
     n=1000,
@@ -2954,37 +3351,47 @@ for _, row in sample_check.iterrows():
 print("Antall avvik:", len(errors))
 print(pd.DataFrame(errors).head())
 
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `84`.
 
-````text
+```text
 Antall avvik: 0
 Empty DataFrame
 Columns: []
 Index: []
 
-````
+```
 
-<a id="celle-66"></a>
-
-### Celle 66 — markdown
+<a id="celle-104"></a>
+### Celle 104 — markdown
 
 Celle-ID: `5f95d80b`.
 
-````markdown
+```markdown
 Kontroll av MEAN_3D
-````
+```
 
-<a id="celle-67"></a>
+<a id="celle-105"></a>
+### Celle 105 — markdown
 
-### Celle 67 — code
+Celle-ID: `workflow-step-67`.
+
+```markdown
+### Steg 33: Kontroller historisk døgnmiddel
+
+- **Hva:** Sammenligner døgnmiddel med kilden.
+- **Hvorfor:** For å validere aggregert historikk.
+- **Utbytte:** Antall avvik i stikkprøven.
+
+```
+
+<a id="celle-106"></a>
+### Celle 106 — code
 
 Celle-ID: `28f7a47a`.
 
-Lagret kjøringsnummer: `85`.
-
-````python
+```python
 # Kontroller MEAN_3D
 sample_check = validation.sample(
     n=1000,
@@ -3027,37 +3434,47 @@ for _, row in sample_check.iterrows():
 print("Antall avvik:", len(errors))
 print(pd.DataFrame(errors).head())
 
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `85`.
 
-````text
+```text
 Antall avvik: 0
 Empty DataFrame
 Columns: []
 Index: []
 
-````
+```
 
-<a id="celle-68"></a>
-
-### Celle 68 — markdown
+<a id="celle-107"></a>
+### Celle 107 — markdown
 
 Celle-ID: `ca1de8b8`.
 
-````markdown
+```markdown
 Kontroll av data leakage
-````
+```
 
-<a id="celle-69"></a>
+<a id="celle-108"></a>
+### Celle 108 — markdown
 
-### Celle 69 — code
+Celle-ID: `workflow-step-69`.
+
+```markdown
+### Steg 34: Kontroller tidsgrenser
+
+- **Hva:** Sammenligner historikkdatoer og prognosetidspunkt.
+- **Hvorfor:** For å kontrollere informasjonsrekkefølgen.
+- **Utbytte:** Telling av tidsoverskridelser.
+
+```
+
+<a id="celle-109"></a>
+### Celle 109 — code
 
 Celle-ID: `39e28f79`.
 
-Lagret kjøringsnummer: `86`.
-
-````python
+```python
 # Kontroller historiske tidsgrenser
 check = df_model.copy()
 
@@ -3085,35 +3502,45 @@ invalid_7d = (
 print("Ugyldige LAG_3D:", invalid_3d)
 print("Ugyldige LAG_7D:", invalid_7d)
 
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `86`.
 
-````text
+```text
 Ugyldige LAG_3D: 0
 Ugyldige LAG_7D: 0
 
-````
+```
 
-<a id="celle-70"></a>
-
-### Celle 70 — markdown
+<a id="celle-110"></a>
+### Celle 110 — markdown
 
 Celle-ID: `3035b8ec`.
 
-````markdown
+```markdown
 Kontroll av SLUTTID
-````
+```
 
-<a id="celle-71"></a>
+<a id="celle-111"></a>
+### Celle 111 — markdown
 
-### Celle 71 — code
+Celle-ID: `workflow-step-71`.
+
+```markdown
+### Steg 35: Måleslutt og publisering
+
+- **Hva:** Kontrollerer historiske måleintervaller.
+- **Hvorfor:** For å vurdere tilgjengelighet ved prognosetid.
+- **Utbytte:** Tilgjengelighetskontroll under eksplisitt antakelse.
+
+```
+
+<a id="celle-112"></a>
+### Celle 112 — code
 
 Celle-ID: `4969c82b`.
 
-Lagret kjøringsnummer: `87`.
-
-````python
+```python
 # Kontroller tidsgrensene for historiske inputvariabler.
 # Publiseringsforsinkelsen er en antakelse, ikke dokumentert her.
 publication_delay = pd.Timedelta(hours=1)
@@ -3184,37 +3611,69 @@ for feature, days, hourly in [
 
 availability_results = pd.DataFrame(results)
 print(availability_results.to_string(index=False))
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `87`.
 
-````text
+```text
 Variabel  Mangler sluttid  Etter prognosetidspunkt  Akkurat ved prognosetidspunkt
   LAG_3D                0                        0                              0
   LAG_7D                0                        0                              0
  MEAN_3D                0                        0                              0
 
-````
+```
 
-<a id="celle-72"></a>
+<a id="celle-113"></a>
+### Celle 113 — markdown
 
-### Celle 72 — markdown
+Celle-ID: `workflow-summary-71`.
+
+```markdown
+**Kort oppsummering**
+
+- Målingenes faktiske publiseringstid er uverifisert. Tilgjengelighetskontrollen forutsetter inntil én times publiseringsforsinkelse.
+
+```
+
+<a id="celle-114"></a>
+### Celle 114 — markdown
 
 Celle-ID: `680a28ef`.
 
-````markdown
+```markdown
 Test ut ulike hyperparametere
-````
+```
 
-<a id="celle-73"></a>
+<a id="celle-115"></a>
+### Celle 115 — markdown
 
-### Celle 73 — code
+Celle-ID: `workflow-phase-73`.
+
+```markdown
+## 5. Hyperparametere og modellvalg
+
+```
+
+<a id="celle-116"></a>
+### Celle 116 — markdown
+
+Celle-ID: `workflow-step-73`.
+
+```markdown
+### Steg 36: Hyperparametere: Random Forest
+
+- **Hva:** Tester fem parameteroppsett på samme valideringsår.
+- **Hvorfor:** For å velge bedre innstillinger uten testdata.
+- **Utbytte:** MAE for hvert forsøk.
+
+```
+
+<a id="celle-117"></a>
+### Celle 117 — code
 
 Celle-ID: `9d142290`.
 
-Lagret kjøringsnummer: `88`.
-
-````python
+```python
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import mean_absolute_error
@@ -3269,11 +3728,11 @@ print(
     .to_string(index=False)
 )
 
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `88`.
 
-````text
+```text
 {'max_depth': 10, 'min_samples_leaf': 5} MAE: 7689.71
 {'max_depth': 15, 'min_samples_leaf': 5} MAE: 7257.75
 {'max_depth': 20, 'min_samples_leaf': 5} MAE: 7204.48
@@ -3288,27 +3747,37 @@ Resultater:
       15.0                 5 7257.75
       10.0                 5 7689.71
 
-````
+```
 
-<a id="celle-74"></a>
-
-### Celle 74 — markdown
+<a id="celle-118"></a>
+### Celle 118 — markdown
 
 Celle-ID: `765c8293`.
 
-````markdown
+```markdown
 Optimalisere Gradient Boosting B
-````
+```
 
-<a id="celle-75"></a>
+<a id="celle-119"></a>
+### Celle 119 — markdown
 
-### Celle 75 — code
+Celle-ID: `workflow-step-75`.
+
+```markdown
+### Steg 37: Hyperparametere: Gradient Boosting
+
+- **Hva:** Tester fem boostingoppsett på 2025.
+- **Hvorfor:** For å velge innstillinger med kronologisk validering.
+- **Utbytte:** MAE for hvert forsøk.
+
+```
+
+<a id="celle-120"></a>
+### Celle 120 — code
 
 Celle-ID: `ab6b41a8`.
 
-Lagret kjøringsnummer: `89`.
-
-````python
+```python
 from sklearn.ensemble import HistGradientBoostingRegressor
 from sklearn.pipeline import Pipeline
 from sklearn.base import clone
@@ -3358,11 +3827,11 @@ print(
     .to_string(index=False)
 )
 
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `89`.
 
-````text
+```text
 {'max_iter': 100, 'learning_rate': 0.1, 'max_leaf_nodes': 31} MAE: 7560.29
 {'max_iter': 200, 'learning_rate': 0.1, 'max_leaf_nodes': 31} MAE: 7369.75
 {'max_iter': 300, 'learning_rate': 0.1, 'max_leaf_nodes': 31} MAE: 7265.2
@@ -3377,27 +3846,37 @@ Resultater:
       300           0.05              31 7434.87
       100           0.10              31 7560.29
 
-````
+```
 
-<a id="celle-76"></a>
-
-### Celle 76 — markdown
+<a id="celle-121"></a>
+### Celle 121 — markdown
 
 Celle-ID: `e91ff1b0`.
 
-````markdown
+```markdown
 Kontroller av de to beste modellene
-````
+```
 
-<a id="celle-77"></a>
+<a id="celle-122"></a>
+### Celle 122 — markdown
 
-### Celle 77 — code
+Celle-ID: `workflow-step-77`.
+
+```markdown
+### Steg 38: Sammenlign beste undersøkte modeller
+
+- **Hva:** Trener valgte skog- og boostingoppsett.
+- **Hvorfor:** For å velge modell etter 2025-MAE.
+- **Utbytte:** Samlet MAE, RMSE og R².
+
+```
+
+<a id="celle-123"></a>
+### Celle 123 — code
 
 Celle-ID: `8aacbc9d`.
 
-Lagret kjøringsnummer: `103`.
-
-````python
+```python
 from sklearn.base import clone
 from sklearn.pipeline import Pipeline
 from sklearn.ensemble import (
@@ -3463,26 +3942,37 @@ final_validation = pd.DataFrame({
 })
 
 print(final_validation.round(3).to_string(index=False))
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `103`.
 
-````text
+```text
               Model      MAE      RMSE   R2
     Random Forest B 7190.257 16488.823 0.99
 Gradient Boosting B 7146.641 16153.297 0.99
 
-````
+```
 
-<a id="celle-78"></a>
+<a id="celle-124"></a>
+### Celle 124 — markdown
 
-### Celle 78 — code
+Celle-ID: `workflow-step-78`.
+
+```markdown
+### Steg 39: Kontrollert Gradient Boosting A/B
+
+- **Hva:** Trener A og B med identiske modellparametere.
+- **Hvorfor:** For å isolere historikkens bidrag.
+- **Utbytte:** En kontrollert valideringssammenligning.
+
+```
+
+<a id="celle-125"></a>
+### Celle 125 — code
 
 Celle-ID: `62a10b8e`.
 
-Lagret kjøringsnummer: `104`.
-
-````python
+```python
 from sklearn.base import clone
 
 # Kalenderbasert preprocessing:
@@ -3543,11 +4033,11 @@ print(f"\nReduksjon i MAE med historikk: {mae_A - mae_B:,.2f} kWh")
 if mae_A > 0:
     improvement = 100 * (mae_A - mae_B) / mae_A
     print(f"Relativ forbedring fra A til B: {improvement:.2f} %")
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `104`.
 
-````text
+```text
              Modell     MAE     RMSE  Iterasjoner
 Gradient Boosting A 9122.75 18553.15          300
 Gradient Boosting B 7146.64 16153.30          300
@@ -3555,27 +4045,59 @@ Gradient Boosting B 7146.64 16153.30          300
 Reduksjon i MAE med historikk: 1,976.10 kWh
 Relativ forbedring fra A til B: 21.66 %
 
-````
+```
 
-<a id="celle-79"></a>
+<a id="celle-126"></a>
+### Celle 126 — markdown
 
-### Celle 79 — markdown
+Celle-ID: `workflow-summary-78`.
+
+```markdown
+**Kort oppsummering**
+
+- Modellvalg bruker MAE på 2025. Kontrollert A/B isolerer historikkens effekt; dette er en annen sammenligning enn sluttmodell mot LAG_7D på test.
+
+```
+
+<a id="celle-127"></a>
+### Celle 127 — markdown
 
 Celle-ID: `97cde162`.
 
-````markdown
+```markdown
 Trene endelig modell
-````
+```
 
-<a id="celle-80"></a>
+<a id="celle-128"></a>
+### Celle 128 — markdown
 
-### Celle 80 — code
+Celle-ID: `workflow-phase-80`.
+
+```markdown
+## 6. Sluttrening og uavhengig evaluering
+
+```
+
+<a id="celle-129"></a>
+### Celle 129 — markdown
+
+Celle-ID: `workflow-step-80`.
+
+```markdown
+### Steg 40: Tren sluttmodellen
+
+- **Hva:** Tilpasser valgt modell på 2022–2025.
+- **Hvorfor:** For å bruke alle data før testperioden.
+- **Utbytte:** Final_model.
+
+```
+
+<a id="celle-130"></a>
+### Celle 130 — code
 
 Celle-ID: `7d9f429a`.
 
-Lagret kjøringsnummer: `92`.
-
-````python
+```python
 from sklearn.base import clone
 
 # Kombiner train og validation
@@ -3598,25 +4120,36 @@ final_model.fit(X_train_final, y_train_final)
 print("Endelig Gradient Boosting-modell ferdig trent.")
 print("Antall treningsobservasjoner:", len(X_train_final))
 
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `92`.
 
-````text
+```text
 Endelig Gradient Boosting-modell ferdig trent.
 Antall treningsobservasjoner: 1024320
 
-````
+```
 
-<a id="celle-81"></a>
+<a id="celle-131"></a>
+### Celle 131 — markdown
 
-### Celle 81 — code
+Celle-ID: `workflow-step-81`.
+
+```markdown
+### Steg 41: Versjon og early stopping
+
+- **Hva:** Viser bibliotekversjon og modellinnstillinger.
+- **Hvorfor:** For å dokumentere treningsforløpet.
+- **Utbytte:** Versjon, iterasjoner og early-stopping-status.
+
+```
+
+<a id="celle-132"></a>
+### Celle 132 — code
 
 Celle-ID: `e0ebb42e`.
 
-Lagret kjøringsnummer: `105`.
-
-````python
+```python
 import sklearn
 
 print("scikit-learn-versjon:", sklearn.__version__)
@@ -3642,38 +4175,48 @@ for name, pipeline in [
     })
 
 print(pd.DataFrame(results).to_string(index=False))
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `105`.
 
-````text
+```text
 scikit-learn-versjon: 1.8.0
                    Modell  early_stopping  Early stopping aktivert  Valideringsandel  Maks iterasjoner  Faktiske iterasjoner  Stoppet før maks  Interne valideringsscore
       Gradient Boosting B           False                    False               0.1               200                   200             False                         0
 Beste Gradient Boosting B           False                    False               0.1               300                   300             False                         0
            Endelig modell           False                    False               0.1               300                   300             False                         0
 
-````
+```
 
-<a id="celle-82"></a>
-
-### Celle 82 — markdown
+<a id="celle-133"></a>
+### Celle 133 — markdown
 
 Celle-ID: `dabad7f0`.
 
-````markdown
+```markdown
 Evaluering av testdataene
-````
+```
 
-<a id="celle-83"></a>
+<a id="celle-134"></a>
+### Celle 134 — markdown
 
-### Celle 83 — code
+Celle-ID: `workflow-step-83`.
+
+```markdown
+### Steg 42: Uavhengig test
+
+- **Hva:** Predikerer og evaluerer januar–april 2026.
+- **Hvorfor:** For å måle sluttmodellens ytelse på senere data.
+- **Utbytte:** Test-MAE, RMSE og R².
+
+```
+
+<a id="celle-135"></a>
+### Celle 135 — code
 
 Celle-ID: `e82619e9`.
 
-Lagret kjøringsnummer: `106`.
-
-````python
+```python
 # Prediker testperioden fra 2026
 pred_test = final_model.predict(X_test_B)
 
@@ -3687,27 +4230,38 @@ print(f"MAE: {test_mae:,.3f} kWh")
 print(f"RMSE: {test_rmse:,.3f} kWh")
 print(f"R2: {test_r2:.4f}")
 
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `106`.
 
-````text
+```text
 FINAL TEST RESULTS (2026)
 MAE: 9,965.047 kWh
 RMSE: 22,689.697 kWh
 R2: 0.9854
 
-````
+```
 
-<a id="celle-84"></a>
+<a id="celle-136"></a>
+### Celle 136 — markdown
 
-### Celle 84 — code
+Celle-ID: `workflow-step-84`.
+
+```markdown
+### Steg 43: Sluttmodellens residualer
+
+- **Hva:** Beregner og plotter testfeil etter forbruksnivå.
+- **Hvorfor:** For å undersøke skjevhet og store feil.
+- **Utbytte:** Residualstatistikk og figurer.
+
+```
+
+<a id="celle-137"></a>
+### Celle 137 — code
 
 Celle-ID: `0ec19c1f`.
 
-Lagret kjøringsnummer: `107`.
-
-````python
+```python
 import matplotlib.pyplot as plt
 
 # Faktisk og predikert forbruk i samme rekkefølge
@@ -3786,11 +4340,11 @@ for ax in axes:
 
 plt.tight_layout()
 plt.show()
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `107`.
 
-````text
+```text
 Gjennomsnittlig residual (kWh): 1725.04
 Median residual (kWh): -45.26
 Andel underprediksjoner (%): 49.38
@@ -3804,35 +4358,43 @@ CONSUMPTION_LEVEL
 (71851.88, 161094.674]     21577             106197.16                  -1465.84   9519.86
 (161094.674, 1073136.78]   21578             409542.80                   9884.90  24295.87
 
-````
+```
 
-**Utdata 2 — `display_data`**
+![Celle 137, resultat 2](figures/celle_137_utdata_02.png)
 
-````text
+```text
 <Figure size 1400x500 with 2 Axes>
-````
+```
 
-![Lagret figur fra celle 84, utdata 2](03_Feature_engineering_dokumentasjon_figurer/celle_84_utdata_02.png)
-
-<a id="celle-85"></a>
-
-### Celle 85 — markdown
+<a id="celle-138"></a>
+### Celle 138 — markdown
 
 Celle-ID: `1ff83310`.
 
-````markdown
+```markdown
 Evaluering av forbruksgruppe
-````
+```
 
-<a id="celle-86"></a>
+<a id="celle-139"></a>
+### Celle 139 — markdown
 
-### Celle 86 — code
+Celle-ID: `workflow-step-86`.
+
+```markdown
+### Steg 44: Test per forbruksgruppe
+
+- **Hva:** Beregner testfeil for hver gruppe.
+- **Hvorfor:** For å vise forskjeller bak samlet feil.
+- **Utbytte:** Gruppevise testresultater.
+
+```
+
+<a id="celle-140"></a>
+### Celle 140 — code
 
 Celle-ID: `a9eb14c1`.
 
-Lagret kjøringsnummer: `108`.
-
-````python
+```python
 # Lag evalueringsdatasett
 test_eval = test.copy()
 test_eval["PREDICTED"] = pred_test
@@ -3855,37 +4417,47 @@ group_test_results = pd.DataFrame(group_test_results)
 
 print(group_test_results.round(3).to_string(index=False))
 
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `108`.
 
-````text
+```text
      Group       MAE      RMSE    R2
 Forretning  6283.884 12916.868 0.991
   Industri  8921.924 22991.670 0.989
     Privat 14689.332 29137.684 0.978
 
-````
+```
 
-<a id="celle-87"></a>
-
-### Celle 87 — markdown
+<a id="celle-141"></a>
+### Celle 141 — markdown
 
 Celle-ID: `024cf440`.
 
-````markdown
+```markdown
 Eval av koummne
-````
+```
 
-<a id="celle-88"></a>
+<a id="celle-142"></a>
+### Celle 142 — markdown
 
-### Celle 88 — code
+Celle-ID: `workflow-step-88`.
+
+```markdown
+### Steg 45: Test per kommune
+
+- **Hva:** Beregner testfeil for hver kommune.
+- **Hvorfor:** For å undersøke geografisk ytelse.
+- **Utbytte:** Kommunale testresultater.
+
+```
+
+<a id="celle-143"></a>
+### Celle 143 — code
 
 Celle-ID: `058292e1`.
 
-Lagret kjøringsnummer: `109`.
-
-````python
+```python
 municipality_test_results = []
 
 for municipality, subset in test_eval.groupby("KOMMUNE"):
@@ -3908,11 +4480,11 @@ print(
     .to_string(index=False)
 )
 
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `109`.
 
-````text
+```text
      Kommune       MAE      RMSE    R2
         Oslo 44425.160 62320.164 0.932
       Bergen 16132.155 24007.240 0.960
@@ -3925,27 +4497,37 @@ Kristiansand  6128.526  9027.665 0.924
      Sunndal  1784.614  8440.357 0.999
        Årdal  1417.215  5596.050 0.999
 
-````
+```
 
-<a id="celle-89"></a>
-
-### Celle 89 — markdown
+<a id="celle-144"></a>
+### Celle 144 — markdown
 
 Celle-ID: `3ae882a1`.
 
-````markdown
+```markdown
 Baseline vs. Gradient boosting på baseline
-````
+```
 
-<a id="celle-90"></a>
+<a id="celle-145"></a>
+### Celle 145 — markdown
 
-### Celle 90 — code
+Celle-ID: `workflow-step-90`.
+
+```markdown
+### Steg 46: Sluttmodell mot ukesbaseline
+
+- **Hva:** Sammenligner testfeil med LAG_7D.
+- **Hvorfor:** For å måle praktisk forbedring.
+- **Utbytte:** En separat testsammenligning.
+
+```
+
+<a id="celle-146"></a>
+### Celle 146 — code
 
 Celle-ID: `63dab071`.
 
-Lagret kjøringsnummer: `110`.
-
-````python
+```python
 # Historisk baseline på testdataene
 baseline_test = test["LAG_7D"]
 
@@ -3971,36 +4553,46 @@ test_comparison = pd.DataFrame({
 
 print(test_comparison.round(3).to_string(index=False))
 
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `110`.
 
-````text
+```text
               Model       MAE      RMSE    R2
 Historical Baseline 12620.646 28642.545 0.977
 Gradient Boosting B  9965.047 22689.697 0.985
 
-````
+```
 
-<a id="celle-91"></a>
-
-### Celle 91 — markdown
+<a id="celle-147"></a>
+### Celle 147 — markdown
 
 Celle-ID: `bf86a2ed`.
 
-````markdown
+```markdown
 Normalisert MAE per kommune
-````
+```
 
-<a id="celle-92"></a>
+<a id="celle-148"></a>
+### Celle 148 — markdown
 
-### Celle 92 — code
+Celle-ID: `workflow-step-92`.
+
+```markdown
+### Steg 47: Normalisert feil per kommune
+
+- **Hva:** Beregner MAE relativt til gjennomsnittlig absolutt forbruk.
+- **Hvorfor:** For å sammenligne ulik skala.
+- **Utbytte:** NMAE i prosent.
+
+```
+
+<a id="celle-149"></a>
+### Celle 149 — code
 
 Celle-ID: `6b46474f`.
 
-Lagret kjøringsnummer: `111`.
-
-````python
+```python
 # Normalisert MAE per kommune
 relative_results = []
 
@@ -4030,11 +4622,11 @@ print(
     .to_string(index=False)
 )
 
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `111`.
 
-````text
+```text
      Kommune  MAE_kWh  Mean_Consumption_kWh  NMAE_%
         Alta  2585.51              22774.67   11.35
         Oslo 44425.16             430540.76   10.32
@@ -4047,27 +4639,37 @@ Kristiansand  6128.53              90482.25    6.77
        Årdal  1417.22             134293.70    1.06
      Sunndal  1784.61             236073.61    0.76
 
-````
+```
 
-<a id="celle-93"></a>
-
-### Celle 93 — markdown
+<a id="celle-150"></a>
+### Celle 150 — markdown
 
 Celle-ID: `b5ea3656`.
 
-````markdown
+```markdown
 NMAE per kommune og forbruksgruppe
-````
+```
 
-<a id="celle-94"></a>
+<a id="celle-151"></a>
+### Celle 151 — markdown
 
-### Celle 94 — code
+Celle-ID: `workflow-step-94`.
+
+```markdown
+### Steg 48: Normalisert feil per kommune og gruppe
+
+- **Hva:** Beregner NMAE for alle kombinasjoner.
+- **Hvorfor:** For å undersøke lokal ytelse.
+- **Utbytte:** En detaljtabell med 30 kombinasjoner.
+
+```
+
+<a id="celle-152"></a>
+### Celle 152 — code
 
 Celle-ID: `3a441bf9`.
 
-Lagret kjøringsnummer: `112`.
-
-````python
+```python
 # Normalisert MAE per kommune og forbruksgruppe
 detailed_results = []
 
@@ -4102,11 +4704,11 @@ print(
     .to_string(index=False)
 )
 
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `112`.
 
-````text
+```text
      Kommune Forbruksgruppe  MAE_kWh  Mean_Consumption_kWh  NMAE_%
         Alta     Forretning  2439.77              21754.16   11.22
         Alta       Industri  1343.87              10711.58   12.55
@@ -4139,17 +4741,28 @@ Kristiansand         Privat  9492.60             121490.01    7.81
        Årdal       Industri  3088.97             392308.18    0.79
        Årdal         Privat   753.50               7298.65   10.32
 
-````
+```
 
-<a id="celle-95"></a>
+<a id="celle-153"></a>
+### Celle 153 — markdown
 
-### Celle 95 — code
+Celle-ID: `workflow-step-95`.
+
+```markdown
+### Steg 49: Lokal forbedring mot baseline
+
+- **Hva:** Sammenligner modell og baseline per kommune og gruppe.
+- **Hvorfor:** For å finne forbedringer og unntak.
+- **Utbytte:** Lokale MAE-forskjeller.
+
+```
+
+<a id="celle-154"></a>
+### Celle 154 — code
 
 Celle-ID: `b5a66188`.
 
-Lagret kjøringsnummer: `113`.
-
-````python
+```python
 comparison_rows = []
 
 for (municipality, group), subset in test_eval.groupby(
@@ -4203,11 +4816,11 @@ else:
         .round(2)
         .to_string(index=False)
     )
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `113`.
 
-````text
+```text
 Alle kombinasjoner, sortert etter relativ forbedring:
      Kommune Forbruksgruppe  MAE_modell  MAE_baseline  Forbedring_prosent
       Tromsø         Privat     6579.57       9889.47               33.47
@@ -4253,17 +4866,28 @@ Antall kombinasjoner dårligere enn baseline: 1
 Kommune Forbruksgruppe  MAE_modell  MAE_baseline  Forbedring_prosent
   Årdal     Forretning      409.18        400.03               -2.29
 
-````
+```
 
-<a id="celle-96"></a>
+<a id="celle-155"></a>
+### Celle 155 — markdown
 
-### Celle 96 — code
+Celle-ID: `workflow-step-96`.
+
+```markdown
+### Steg 50: Ytelse per måned
+
+- **Hva:** Beregner månedlig modell- og baselinefeil.
+- **Hvorfor:** For å undersøke sesong og stabilitet.
+- **Utbytte:** Atskilte validerings- og testresultater.
+
+```
+
+<a id="celle-156"></a>
+### Celle 156 — code
 
 Celle-ID: `591f8fc3`.
 
-Lagret kjøringsnummer: `114`.
-
-````python
+```python
 monthly_rows = []
 
 for period, data, predictions in [
@@ -4327,11 +4951,11 @@ for period in ["Validering", "Uavhengig test"]:
             f"Minst relativ forbedring: {worst['Måned']} "
             f"({worst['Forbedring_prosent']:.2f} %)"
         )
-````
+```
 
-**Utdata 1 — `stream`** (`stdout`)
+Lagret kjøringsnummer: `114`.
 
-````text
+```text
 
 VALIDERING
    Periode   Måned  Antall  MAE_modell  MAE_baseline  Forbedring_prosent
@@ -4361,29 +4985,61 @@ Uavhengig test 2026-04   21540     7130.75       8993.87               20.72
 Størst relativ forbedring: 2026-01 (30.05 %)
 Minst relativ forbedring: 2026-02 (-3.88 %)
 
-````
+```
 
-<a id="celle-97"></a>
+<a id="celle-157"></a>
+### Celle 157 — markdown
 
-### Celle 97 — markdown
+Celle-ID: `workflow-summary-96`.
+
+```markdown
+**Kort oppsummering**
+
+- Lagrede testresultater gir MAE 9 965,047 kWh og omtrent 21,04 % forbedring mot LAG_7D. Se lokale unntak og sesongvariasjon før samlet ytelse generaliseres.
+
+```
+
+<a id="celle-158"></a>
+### Celle 158 — markdown
 
 Celle-ID: `summary-figure-1-text`.
 
-````markdown
-## Actual vs. Predicted – Gradient Boosting B
+```markdown
+#### Actual vs. Predicted – Gradient Boosting B
 
 Sluttmodellen, trent på 2022–2025, evalueres på testdata. Grafen viser Oslo Privat 12.–18. januar 2026 (lokal tid), en fast valgt uke. Endre kommune, forbruksgruppe og datogrenser i cellen for andre utsnitt.
-````
+```
 
-<a id="celle-98"></a>
+<a id="celle-159"></a>
+### Celle 159 — markdown
 
-### Celle 98 — code
+Celle-ID: `workflow-phase-98`.
+
+```markdown
+## 7. Resultatfigurer
+
+```
+
+<a id="celle-160"></a>
+### Celle 160 — markdown
+
+Celle-ID: `workflow-step-98`.
+
+```markdown
+### Steg 51: Sluttmodell: faktisk og predikert
+
+- **Hva:** Plotter en fast testuke i Oslo Privat.
+- **Hvorfor:** For å vise prognosens tidsforløp.
+- **Utbytte:** En testfigur.
+
+```
+
+<a id="celle-161"></a>
+### Celle 161 — code
 
 Celle-ID: `summary-figure-1-code`.
 
-Lagret kjøringsnummer: `115`.
-
-````python
+```python
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
@@ -4408,37 +5064,47 @@ fig.autofmt_xdate()
 fig.tight_layout()
 plt.show()
 
-````
+```
 
-**Utdata 1 — `display_data`**
+Lagret kjøringsnummer: `115`.
 
-````text
+![Celle 161, resultat 1](figures/celle_161_utdata_01.png)
+
+```text
 <Figure size 1400x500 with 1 Axes>
-````
+```
 
-![Lagret figur fra celle 98, utdata 1](03_Feature_engineering_dokumentasjon_figurer/celle_98_utdata_01.png)
-
-<a id="celle-99"></a>
-
-### Celle 99 — markdown
+<a id="celle-162"></a>
+### Celle 162 — markdown
 
 Celle-ID: `summary-figure-2-text`.
 
-````markdown
-## NMAE per kommune og forbruksgruppe (Heatmap)
+```markdown
+#### NMAE per kommune og forbruksgruppe (Heatmap)
 
 Testperiode: januar–april 2026. NMAE = 100 × MAE / gjennomsnittlig absolutt faktisk forbruk innen hver kommune–gruppe-kombinasjon. Lavere verdi er bedre; dette er ikke MAPE.
-````
+```
 
-<a id="celle-100"></a>
+<a id="celle-163"></a>
+### Celle 163 — markdown
 
-### Celle 100 — code
+Celle-ID: `workflow-step-100`.
+
+```markdown
+### Steg 52: NMAE-varmekart
+
+- **Hva:** Visualiserer normalisert lokal testfeil.
+- **Hvorfor:** For å gjøre forskjeller mellom grupper synlige.
+- **Utbytte:** Et kommune–gruppe-varmekart.
+
+```
+
+<a id="celle-164"></a>
+### Celle 164 — code
 
 Celle-ID: `summary-figure-2-code`.
 
-Lagret kjøringsnummer: `116`.
-
-````python
+```python
 nmae_heatmap = (
     detailed_results.pivot(index="Kommune", columns="Forbruksgruppe", values="NMAE_%")
     .sort_index()
@@ -4460,37 +5126,47 @@ fig.colorbar(heatmap, ax=ax, label="NMAE (%) – lower is better")
 fig.tight_layout()
 plt.show()
 
-````
+```
 
-**Utdata 1 — `display_data`**
+Lagret kjøringsnummer: `116`.
 
-````text
+![Celle 164, resultat 1](figures/celle_164_utdata_01.png)
+
+```text
 <Figure size 800x800 with 2 Axes>
-````
+```
 
-![Lagret figur fra celle 100, utdata 1](03_Feature_engineering_dokumentasjon_figurer/celle_100_utdata_01.png)
-
-<a id="celle-101"></a>
-
-### Celle 101 — markdown
+<a id="celle-165"></a>
+### Celle 165 — markdown
 
 Celle-ID: `summary-figure-3-text`.
 
-````markdown
-## Monthly MAE – Gradient Boosting vs. Baseline
+```markdown
+#### Monthly MAE – Gradient Boosting vs. Baseline
 
 Testresultatene holdes atskilt fra validering. Stolpene viser sluttmodellen mot sesongnaiv baseline (`LAG_7D`) for hver av de fire testmånedene.
-````
+```
 
-<a id="celle-102"></a>
+<a id="celle-166"></a>
+### Celle 166 — markdown
 
-### Celle 102 — code
+Celle-ID: `workflow-step-102`.
+
+```markdown
+### Steg 53: Månedlig testfeil mot baseline
+
+- **Hva:** Plotter MAE for de fire testmånedene.
+- **Hvorfor:** For å sammenligne ytelsen over tid.
+- **Utbytte:** En månedlig testfigur.
+
+```
+
+<a id="celle-167"></a>
+### Celle 167 — code
 
 Celle-ID: `summary-figure-3-code`.
 
-Lagret kjøringsnummer: `117`.
-
-````python
+```python
 test_monthly_mae = (
     monthly_results.loc[monthly_results["Periode"] == "Uavhengig test"]
     .sort_values("Måned")
@@ -4510,37 +5186,47 @@ ax.legend()
 ax.figure.tight_layout()
 plt.show()
 
-````
+```
 
-**Utdata 1 — `display_data`**
+Lagret kjøringsnummer: `117`.
 
-````text
+![Celle 167, resultat 1](figures/celle_167_utdata_01.png)
+
+```text
 <Figure size 1100x500 with 1 Axes>
-````
+```
 
-![Lagret figur fra celle 102, utdata 1](03_Feature_engineering_dokumentasjon_figurer/celle_102_utdata_01.png)
-
-<a id="celle-103"></a>
-
-### Celle 103 — markdown
+<a id="celle-168"></a>
+### Celle 168 — markdown
 
 Celle-ID: `summary-figure-4-text`.
 
-````markdown
-## Model Comparison – Validation MAE
+```markdown
+#### Model Comparison – Validation MAE
 
 Alle modellene trenes på 2022–2024 og evalueres på 2025. A bruker kalender, kommune og forbruksgruppe; B bruker også historisk forbruk. Random Forest B og Gradient Boosting B vises med de beste undersøkte innstillingene. Sluttmodellens testresultater inngår ikke her.
-````
+```
 
-<a id="celle-104"></a>
+<a id="celle-169"></a>
+### Celle 169 — markdown
 
-### Celle 104 — code
+Celle-ID: `workflow-step-104`.
+
+```markdown
+### Steg 54: Modellsammenligning på validering
+
+- **Hva:** Plotter MAE fra 2025 for modellene.
+- **Hvorfor:** For å vise grunnlaget for modellvalget.
+- **Utbytte:** En rangert valideringsfigur.
+
+```
+
+<a id="celle-170"></a>
+### Celle 170 — code
 
 Celle-ID: `summary-figure-4-code`.
 
-Lagret kjøringsnummer: `118`.
-
-````python
+```python
 validation_mae_plot = pd.Series({
     "Baseline A (calendar mean)": mean_absolute_error(y_val, val_baseline_A["PREDICTION"]),
     "Baseline B (LAG_7D)": mean_absolute_error(y_val, validation["LAG_7D"]),
@@ -4566,12 +5252,24 @@ ax.set_axisbelow(True)
 ax.figure.tight_layout()
 plt.show()
 
-````
+```
 
-**Utdata 1 — `display_data`**
+Lagret kjøringsnummer: `118`.
 
-````text
+![Celle 170, resultat 1](figures/celle_170_utdata_01.png)
+
+```text
 <Figure size 1200x600 with 1 Axes>
-````
+```
 
-![Lagret figur fra celle 104, utdata 1](03_Feature_engineering_dokumentasjon_figurer/celle_104_utdata_01.png)
+<a id="celle-171"></a>
+### Celle 171 — markdown
+
+Celle-ID: `workflow-summary-104`.
+
+```markdown
+**Kort oppsummering**
+
+- Valideringsfiguren begrunner modellvalget. De øvrige sluttfigurene beskriver testperioden. Full kode, lagrede utdata og forutsetninger er dokumentert i reports/forecasting/.
+
+```

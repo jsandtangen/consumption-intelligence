@@ -1,11 +1,13 @@
 # Analyse av originalfilen consumption.csv
 
 Generert: 2026-11-08T17:35:15+01:00
-Python: 3.12.11. Skript: analyze_consumption.py (standardbiblioteket).
+Python: 3.12.11. Skript: scripts/data/profile_raw_data.py (standardbiblioteket).
+
+> Filen er flyttet ved restrukturering 9. november 2026. Tall, filstørrelse og SHA-256 gjelder den opprinnelige analysen; rådata er ikke endret.
 
 ## Fil og metode
 
-- Kilde: `C:\Users\jsand\OneDrive - OsloMet\NETTSKY\SKOLE\26-27\SEMESTER 1\ACIT4510\energy\data\consumption.csv`
+- Kilde: `data/raw/consumption.csv`
 - Filstørrelse: 3,541,628,439 byte (3.542 GB).
 - SHA-256: `813f35e83ed484a14eb33d3def0bb178e782c77385313924bcbc23e5c504bf70`
 - Lest som UTF-8 (eventuell BOM fjernes), semikolon mellom felt og desimalkomma.

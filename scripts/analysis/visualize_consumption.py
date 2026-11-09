@@ -1,8 +1,15 @@
+"""Innledende nasjonale figurer fra rådata; dato og klokktime bruker UTC."""
+from pathlib import Path
+
 import pandas as pd
 import matplotlib.pyplot as plt
 
+ROOT = Path(__file__).resolve().parents[2]
+FIGURES = ROOT / "reports/data_analysis/figures"
+FIGURES.mkdir(parents=True, exist_ok=True)
+
 df = pd.read_csv(
-    "consumption_per_group_municipality_hour-all-no-0000-00-00.csv",
+    ROOT / "data/raw/consumption.csv",
     sep=";",
     decimal=","
 )
@@ -29,11 +36,11 @@ for gruppe in daily["FORBRUKSGRUPPE"].unique():
     subset = daily[daily["FORBRUKSGRUPPE"] == gruppe]
     ax.plot(subset["dato"], subset["VOLUM_KWH"], label=gruppe)
 ax.set_title("Daglig strømforbruk i Norge, etter forbruksgruppe")
-ax.set_xlabel("Dato")
+ax.set_xlabel("Dato (UTC)")
 ax.set_ylabel("Forbruk (kWh)")
 ax.legend()
 plt.tight_layout()
-plt.savefig("daglig_forbruk.png", dpi=150)
+plt.savefig(FIGURES / "daglig_forbruk.png", dpi=150)
 plt.show()
 
 # 4. Gjennomsnittlig forbruksprofil per time på døgnet
@@ -45,11 +52,11 @@ for gruppe in hourly_profile["FORBRUKSGRUPPE"].unique():
     subset = hourly_profile[hourly_profile["FORBRUKSGRUPPE"] == gruppe]
     ax2.plot(subset["time"], subset["VOLUM_KWH"], marker="o", label=gruppe)
 ax2.set_title("Gjennomsnittlig forbruk per time på døgnet")
-ax2.set_xlabel("Time på døgnet")
+ax2.set_xlabel("Time på døgnet (UTC)")
 ax2.set_ylabel("Gjennomsnittlig forbruk (kWh)")
 ax2.legend()
 plt.tight_layout()
-plt.savefig("time_profil.png", dpi=150)
+plt.savefig(FIGURES / "time_profil.png", dpi=150)
 plt.show()
 
 # 5. Generell oversikt til dokumentet

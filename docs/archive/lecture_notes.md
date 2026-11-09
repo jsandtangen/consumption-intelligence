@@ -1,3 +1,7 @@
+# Historiske arbeidsnotater
+
+> Beholdt som prosjekthistorikk. Eldre features (blant annet LAG_2D) og resultattall er ikke gjeldende metode eller sluttresultater. Se [gjeldende modellrapport](../../reports/forecasting/methods_and_results.md).
+
 ### 1. Data og preprocessing
 
 - Jobbet med ca. 1,1 millioner observasjoner fra februar 2022 til april 2026.

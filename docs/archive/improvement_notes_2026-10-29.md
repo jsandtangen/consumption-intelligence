@@ -1,3 +1,7 @@
+# Historiske arbeidsnotater
+
+> Beholdt som prosjekthistorikk. Eldre features (blant annet LAG_2D) og resultattall er ikke gjeldende metode eller sluttresultater. Se [gjeldende modellrapport](../../reports/forecasting/methods_and_results.md).
+
 1. Kontrollere prognoseoppsett og data leakage
 
 Bekreft at alle inputvariabler faktisk er tilgjengelige når prognosen lages kl. 00 dagen før måldagen. Kontroller særlig LAG_2D, LAG_7D og PREV_DAY_MEAN. Dokumenter at tilgjengeligheten av målinger er en forutsetning dersom faktisk publiseringstid ikke kan bekreftes.
